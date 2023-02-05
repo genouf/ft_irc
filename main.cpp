@@ -6,7 +6,7 @@
 /*   By: gkehren <gkehren@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/04 20:04:50 by gkehren           #+#    #+#             */
-/*   Updated: 2023/02/04 23:16:08 by gkehren          ###   ########.fr       */
+/*   Updated: 2023/02/05 02:16:12 by gkehren          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int main()
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0)
 	{
-		std::cout << "Error creating socket" << std::endl;
+		perror("Error creating socket");
 		return (1);
 	}
 
@@ -44,7 +44,7 @@ int main()
 
 	if (bind(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 	{
-		std::cout << "Error binding socket" << std::endl;\
+		perror("Error binding socket");
 		close(sockfd);
 		return (1);
 	}
@@ -55,7 +55,7 @@ int main()
 	// test connection to the socket
 	if(connect(sockfd, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 	{
-		std::cout << "Error connecting socket" << std::endl;
+		perror("Error connecting socket");
 		close(sockfd);
 		return (1);
 	}

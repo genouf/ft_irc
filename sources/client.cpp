@@ -28,14 +28,17 @@ int main(void)
 	}
 	std::cout << "Socket connected" << std::endl;
 
-	char msg[1024];
-	if (recv(socket_client, &msg, sizeof(msg), 0) < 0)
+	char msg[] = "Hello World!";
+	if (send(socket_client, &msg, sizeof(msg), 0) < 0)
 	{
-		std::perror("Error receiving data");
+		std::perror("Error sending data");
 		close(socket_client);
 		return (1);
 	}
-	std::cout << "Data received: " << msg << std::endl;
+	std::cout << "Data sent" << std::endl;
+
+	while (true)
+	{}
 
 	close(socket_client);
 	return (0);

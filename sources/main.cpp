@@ -1,19 +1,10 @@
-#include "Socket.hpp"
+#include "Server.hpp"
 
 int main()
 {
-	Socket sock(6667, "");
-	std::cout << "Socket created and binded" << std::endl;
+	Server sock(6667, "");
 
-	// LISTEN
-	// socket is ready to accept connections
-	// n = number of connections
-	if (listen(sock.getSocket(), 1) < 0)
-	{
-		std::perror("Error listening socket");
-		close(sock.getSocket());
-		return (1);
-	}
+	std::cout << "Socket created and binded" << std::endl;
 	std::cout << "Socket listening" << std::endl;
 
 	// ACCEPT
@@ -42,6 +33,5 @@ int main()
 	std::cout << "Data sent" << std::endl;
 
 	close(sock_client);
-	close(sock.getSocket());
 	return (0);
 }

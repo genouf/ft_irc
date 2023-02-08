@@ -6,6 +6,9 @@
 #include <cerrno>
 #include <iostream>
 #include <cstring>
+#include <vector>
+
+#include "User.hpp"
 
 #define MAX_QUEUED 1000
 
@@ -16,17 +19,18 @@ class Server
 		int					_sockfd;
 		struct sockaddr_in	_addr;
 		std::string			_password;
+		std::vector<User>	_users;
 
 	public:
-		/*	CONSTRUCTORS / DESTRUCTOR	*/
+		/*	CONSTRUCTOR / DESTRUCTOR	*/
 		Server(int port, std::string password);
 		virtual ~Server();
 
 		/*	GETTER	*/
-		int getSocket() const
-		{
-			return(this->_sockfd);
-		};
+		int getSocket() const;
+
+		/*	FUNCTIONS	*/
+		void	run();
 
 		/*	EXCEPTIONS	*/
 		class InvalidServerException

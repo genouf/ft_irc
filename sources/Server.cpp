@@ -1,11 +1,9 @@
-#include "Server.hpp"
+#include "../includes/Server.hpp"
 
+/*	CONSTRUCTOR / DESTRUCTOR	*/
 Server::Server(int port, std::string password)
 {
-	// SOCKET
-	// AF_INET = IPv4
-	// SOCK_STREAM = TCP
-	// 0 = protocol
+	this->_password = password;
 	try
 	{
 		this->_sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -16,16 +14,8 @@ Server::Server(int port, std::string password)
 	{
 		std::cerr << e.what() << std::endl;
 	}
-
-
-	// BIND SOCKET
-	// AF_INET = IPv4
 	this->_addr.sin_family = AF_INET;
-	// htons = host to network short
-	// 6667 = port
 	this->_addr.sin_port = htons(port);
-	// htonl = host to network long
-	// INADDR_ANY = any address
 	this->_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	try
 	{
@@ -36,10 +26,6 @@ Server::Server(int port, std::string password)
 	{
 		std::cerr << e.what() << '\n';
 	}
-
-	// LISTEN
-	// socket is ready to accept connections
-	// n = number of connections
 	try
 	{
 		if (listen(this->_sockfd, MAX_QUEUED) < 0)
@@ -49,12 +35,26 @@ Server::Server(int port, std::string password)
 	{
 		std::cerr << e.what() << '\n';
 	}
-
-	this->_password = password;
+	struct pollfd tmp = {this->_sockfd, POLLIN, 0};
+	this->_users.push_back(User(tmp));
+	this->_users[0].setNick("server");
+	this->_users[0].setName("server");
 }
 
 Server::~Server()
 {
 	if (this->_sockfd != -1)
 		close(this->_sockfd);
+}
+
+/*	GETTER	*/
+int Server::getSocket() const { return(this->_sockfd); }
+
+/*	FUNCTIONS	*/
+void	Server::run()
+{
+	while (42)
+	{
+		int	ret = poll()
+	}
 }

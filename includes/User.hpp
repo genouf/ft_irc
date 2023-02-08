@@ -1,18 +1,23 @@
 #pragma once
 #include <iostream>
+#include "Server.hpp"
 #include "poll.h"
 
 class User
 {
 	/*	MEMBER VAR	*/
 	private:
-		std::string		_nick;
-		std::string		_user;
-		bool			_auth;
+		std::string			_nick;
+		std::string			_user;
+		bool				_auth;
+		int					_fd;
+		std::string			_ip;
+		std::string			_hostname;
+		
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
-		User();
+		User(int fd, struct sockaddr_in addr);
 		virtual ~User();
 
 		/*	GETTER	*/

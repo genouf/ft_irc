@@ -59,22 +59,16 @@ int Server::getSocket() const { return(this->_sockfd); }
 /*	FUNCTIONS	*/
 int	Server::run()
 {
-	size_t	current_size = 0;
-	int		new_socket = -1;
-
 	while (42)
 	{
 		int ret = poll(this->_sockets.data(), this->_sockets.size(), -1);
-		std::cout << "NEW POLL" << std::endl;
 		if (ret < 0)
 		{
 			std::perror("Error polling");
 			return (1);
 		}
-		current_size = this->_sockets.size();
-		for (size_t i = 0; i < current_size; i++)
+		for (int i = 0; i < (int)this->_sockets.size(); i++)
 		{
-			std::cout << "Je regarde le socket numero : " << i << std::endl;
 			if (this->_sockets[i].revents == 0)
 				continue ;
 			if (this->_sockets[i].revents != POLLIN)
@@ -84,47 +78,19 @@ int	Server::run()
 			}
 			if (this->_sockets[i].fd == this->_sockfd)
 			{
-				std::cout << "Listening socket is readable" << std::endl;
-				do
-				{
-					// Penser a rajouter la structure sockaddr_in si necessaire.
-					new_socket = accept(this->_sockfd, NULL, NULL);
-					if (new_socket < 0)
-					{
-						// A preciser
-						if (errno != EWOULDBLOCK)
-						{
-							std::perror("Accept failed");
-							return (1);
-						}
-						break;
-					}
-					struct pollfd	tmp = {new_socket, POLLIN, 0};
-					this->_sockets.push_back(tmp);
-					this->_users.insert(std::make_pair(new_socket, User()));
-					send(new_socket, ":127.0.0.1 001 test :LETS GO CA MARCHE\r\n", 41, 0);
-					std::cout << "New connection, socket fd is " << new_socket << std::endl;
-				} while (new_socket != -1);
+				ret = this->new_socket();
+				if (ret == 1)
+					return (1);
+				else if (ret == 2)
+					break;
 			}
 			else
 			{
-				char msg[1024];
-				int ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
-				if (ret < 0)
-				{
-					if (errno == EWOULDBLOCK || errno == EAGAIN)
-						return (1);
-					std::perror("Error receiving data");
+				ret = this->new_msg(i);
+				if (ret == 1)
 					return (1);
-				}
-				if (ret == 0)
-				{
-					delete_socket(this->_sockets[i].fd, i);
-					i--;
+				else if (ret == 2)
 					continue;
-				}
-				msg[ret] = '\0';
-				std::cout << "Data received from " << this->_sockets[i].fd << ": " << msg << std::endl;
 			}
 		}
 	}
@@ -138,4 +104,56 @@ void	Server::delete_socket(int fd, int i)
 	close(fd);
 	this->_sockets.erase(this->_sockets.begin() + i);
 	this->_users.erase(this->_sockets[i].fd);
+}
+
+int		Server::new_socket()
+{
+	int		new_socket = -1;
+
+	std::cout << "Listening socket is readable" << std::endl;
+	do
+	{
+		struct sockaddr_in client_addr;
+		socklen_t client_len = sizeof(client_addr);
+		new_socket = accept(this->_sockfd, (struct sockaddr*)&client_addr, &client_len);
+		if (new_socket < 0)
+		{
+			if (errno != EWOULDBLOCK)
+			{
+				std::perror("Accept failed");
+				return (1);
+			}
+			return (2);
+		}
+		struct pollfd	tmp = {new_socket, POLLIN, 0};
+		this->_sockets.push_back(tmp);
+		this->_users.insert(std::make_pair(new_socket, User(new_socket, client_addr)));
+		send(new_socket, ":127.0.0.1 001 test :LETS GO CA MARCHE\r\n", 41, 0);
+		std::cout << "New connection, socket fd is " << new_socket << std::endl;
+	} while (new_socket != -1);
+	return (0);
+}
+
+int		Server::new_msg(int &i)
+{
+	char	msg[1024];
+	int		ret = -1;
+
+	ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
+	if (ret < 0)
+	{
+		if (errno == EWOULDBLOCK || errno == EAGAIN)
+			return (1);
+		std::perror("Error receiving data");
+		return (1);
+	}
+	if (ret == 0)
+	{
+		delete_socket(this->_sockets[i].fd, i);
+		i--;
+		return (2);
+	}
+	msg[ret] = '\0';
+	std::cout << "Data received from " << this->_sockets[i].fd << ": " << msg << std::endl;
+	return (0);
 }

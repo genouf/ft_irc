@@ -1,5 +1,7 @@
 #include "../includes/Server.hpp"
 #include "../includes/User.hpp"
+#include <string>
+#include <sstream>
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
 Server::Server(int port, std::string password)
@@ -155,5 +157,24 @@ int		Server::new_msg(int &i)
 	}
 	msg[ret] = '\0';
 	std::cout << "Data received from " << this->_sockets[i].fd << ": " << msg << std::endl;
+	std::string msg_s(msg);
+	this->parsing_msg(msg_s);
 	return (0);
+}
+
+void	Server::parsing_msg(std::string msg)
+{
+	std::vector<std::vector<std::string> > 	big_v;
+	std::istringstream						sstream(msg);
+	std::string								s;
+
+	while (std::getline(sstream, s, '\n'))
+	{
+		std::istringstream			sstream2(s);
+		std::string					s2;
+		std::vector<std::string>	tmp;
+		while (std::getline(sstream2, s2, ' '))
+			tmp.push_back(s2);
+		big_v.push_back(tmp);
+	}
 }

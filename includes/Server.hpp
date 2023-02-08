@@ -33,6 +33,8 @@ class Server
 		void	delete_socket(int fd, int i);
 		int		new_socket();
 		int		new_msg(int &i);
+		void	parsing_msg(std::string msg);
+		
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
 		Server(int port, std::string password);

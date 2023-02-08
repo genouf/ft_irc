@@ -10,6 +10,7 @@
 #include <cstring>
 #include <vector>
 #include <map>
+#include <fcntl.h>
 #include "User.hpp"
 
 #define MAX_QUEUED 1000
@@ -31,25 +32,10 @@ class Server
 		virtual ~Server();
 
 		/*	GETTER	*/
-		int getSocket() const;
+		int		getSocket() const;
 
 		/*	FUNCTIONS	*/
 		int		run();
-
-		/*	EXCEPTIONS	*/
-		class InvalidServerException
-		{
-			public:
-				InvalidServerException(std::string error) : e(error + ": " + std::strerror(errno))
-				{}
-
-				const char *what() const throw()
-				{
-					return(e.c_str());
-				}
-
-			private:
-				std::string e;
-		};
+		int		receive(int fd);
 };
 

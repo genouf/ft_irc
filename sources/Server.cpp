@@ -1,6 +1,5 @@
 #include "../includes/Server.hpp"
 #include "../includes/User.hpp"
-#include <signal.h>
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
 Server::Server(int port, std::string password)
@@ -62,8 +61,8 @@ int	Server::run()
 		current_size = this->_sockets.size();
 		for (size_t i = 0; i < current_size; i++)
 		{
-			if (this->_sockets[i].revents == 0)
-				continue ;
+			//if (this->_sockets[i].revents == 0)
+			//	continue ;
 			if (this->_sockets[i].revents != POLLIN)
 			{
 				std::perror("Error about revents");
@@ -72,7 +71,7 @@ int	Server::run()
 			if (this->_sockets[i].fd == this->_sockfd)
 			{
 				std::cout << "Listening socket is readable" << std::endl;
-				do 
+				do
 				{
 					// Penser a rajouter la structure sockaddr_in si necessaire.
 					new_socket = accept(this->_sockfd, NULL, NULL);
@@ -87,31 +86,49 @@ int	Server::run()
 						break;
 					}
 					struct pollfd	tmp = {new_socket, POLLIN, 0};
+					fcntl(new_socket, F_SETFL, O_NONBLOCK);
 					this->_sockets.push_back(tmp);
 					this->_users.insert(std::make_pair(new_socket, User()));
+					//while (ret > 0)
+					//{
+					//	ret = receive(new_socket);
+					//	if (ret == 0)
+					//	{
+					//		delete_socket(new_socket, i);
+					//		break ;
+					//	}
+					//}
+					// connection accepted
+					send(new_socket, ":127.0.0.1 001 test :LETS GO CA MARCHE\r\n", 41, 0);
+					std::cout << "New connection, socket fd is " << new_socket << std::endl;
 				} while (new_socket != -1);
 			}
 			else
-			{
-				char msg[1024];
-				int ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
-				if (ret < 0)
-				{
-					std::perror("Error receiving data");
-					return (1);
-				}
-				if (ret == 0)
-				{
-					std::cout << "Socket closed " << this->_sockets[i].fd << std::endl;
-					delete_socket(this->_sockets[i].fd, i);
-					i--;
-					continue;
-				}
-				std::cout << "Data received from " << i << ": " << msg << std::endl;
-			}
+				receive(this->_sockets[i].fd);
 		}
 	}
 	return (0);
+}
+
+int	Server::receive(int fd)
+{
+	char msg[1024];
+	int ret = recv(fd, &msg, sizeof(msg), 0);
+	if (ret < 0)
+	{
+		if (errno == EWOULDBLOCK || errno == EAGAIN)
+			return (1);
+		std::perror("Error receiving data");
+		return (ret);
+	}
+	if (ret == 0)
+	{
+		std::cout << "Socket closed " << fd << std::endl;
+		return (ret);
+	}
+	msg[ret] = '\0';
+	std::cout << "Data received from " << fd << ": " << msg << std::endl;
+	return (ret);
 }
 
 

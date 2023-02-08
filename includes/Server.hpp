@@ -2,6 +2,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <cstdio>
 #include <cerrno>
 #include <iostream>
@@ -19,6 +20,7 @@ class Server
 		int					_sockfd;
 		struct sockaddr_in	_addr;
 		std::string			_password;
+		std::vector<pollfd>	_sockets;
 		std::vector<User>	_users;
 
 	public:
@@ -30,7 +32,8 @@ class Server
 		int getSocket() const;
 
 		/*	FUNCTIONS	*/
-		void	run();
+		int		run();
+		void	authenticate(int new_socket);
 
 		/*	EXCEPTIONS	*/
 		class InvalidServerException

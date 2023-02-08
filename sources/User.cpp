@@ -1,7 +1,7 @@
 #include "../includes/User.hpp"
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
-User::User(struct pollfd socket) : _socket(socket) { return ; }
+User::User(std::string nick, std::string name) : _nick(nick), _name(name) { return ; }
 
 User::~User() { return ; }
 

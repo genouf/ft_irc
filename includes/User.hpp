@@ -6,12 +6,12 @@ class User
 	/*	MEMBER VAR	*/
 	private:
 		std::string		_nick;
-		std::string		_name;
-		struct pollfd	_socket;
+		std::string		_user;
+		bool			_status;
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
-		User(struct pollfd socket);
+		User(std::string nick, std::string name);
 		virtual ~User();
 
 		/*	GETTER	*/

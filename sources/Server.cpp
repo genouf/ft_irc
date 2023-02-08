@@ -1,15 +1,6 @@
 #include "../includes/Server.hpp"
 #include <signal.h>
 
-int	running = 1;
-
-void	stop_server(int sig)
-{
-	(void)sig;
-	running = 0;
-	return ;
-}
-
 /*	CONSTRUCTOR / DESTRUCTOR	*/
 Server::Server(int port, std::string password)
 {
@@ -59,14 +50,12 @@ int	Server::run()
 	size_t	current_size = 0;
 	int		new_socket = -1;
 
-	signal(SIGINT, stop_server);
-	while (running)
+	while (42)
 	{
 		int ret = poll(this->_sockets.data(), this->_sockets.size(), -1);
 		if (ret < 0)
 		{
-			if (running == 1)
-				std::perror("Error polling");
+			std::perror("Error polling");
 			return (1);
 		}
 		current_size = this->_sockets.size();
@@ -99,6 +88,25 @@ int	Server::run()
 					authenticate(new_socket);
 				} while (new_socket != -1);
 			}
+			else
+			{
+				char msg[1024];
+				int ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
+				if (ret < 0)
+				{
+					std::perror("Error receiving data");
+					return (1);
+				}
+				if (ret == 0)
+				{
+					std::cout << "Socket closed " << this->_sockets[i].fd << std::endl;
+					close(this->_sockets[i].fd);
+					this->_sockets.erase(this->_sockets.begin() + i);
+					i--;
+					continue;
+				}
+				std::cout << "Data received from " << i << ": " << msg << std::endl;
+			}
 		}
 	}
 	return (0);
@@ -107,7 +115,7 @@ int	Server::run()
 void	Server::authenticate(int new_socket)
 {
 	char	buffer[1024];
-	for (int i = 0; i < 2; i++)
+	while (true)
 	{
 		int		ret = recv(new_socket, buffer, sizeof(buffer), 0);
 		if (ret < 0)

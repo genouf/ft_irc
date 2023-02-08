@@ -1,4 +1,5 @@
 #include "../includes/Server.hpp"
+#include "../includes/User.hpp"
 #include <signal.h>
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
@@ -85,7 +86,9 @@ int	Server::run()
 						}
 						break;
 					}
-					authenticate(new_socket);
+					struct pollfd	tmp = {new_socket, POLLIN, 0};
+					this->_sockets.push_back(tmp);
+					this->_users.insert(std::make_pair(new_socket, User()));
 				} while (new_socket != -1);
 			}
 			else
@@ -100,8 +103,7 @@ int	Server::run()
 				if (ret == 0)
 				{
 					std::cout << "Socket closed " << this->_sockets[i].fd << std::endl;
-					close(this->_sockets[i].fd);
-					this->_sockets.erase(this->_sockets.begin() + i);
+					delete_socket(this->_sockets[i].fd, i);
 					i--;
 					continue;
 				}
@@ -112,28 +114,11 @@ int	Server::run()
 	return (0);
 }
 
-void	Server::authenticate(int new_socket)
-{
-	char	buffer[1024];
-	while (true)
-	{
-		int		ret = recv(new_socket, buffer, sizeof(buffer), 0);
-		if (ret < 0)
-		{
-			std::perror("Error receiving");
-			return ;
-		}
-		if (ret == 0)
-		{
-			std::cout << "Connection closed" << std::endl;
-			return ;
-		}
-		buffer[ret] = '\0';
-		std::cout << "Received: " << buffer << std::endl;
-	}
 
-	send(new_socket, "001 :Connected\n", 16, 0);
-	send(new_socket, "Hello World!", 12, 0);
-	struct pollfd	tmp = {new_socket, POLLIN, 0};
-	this->_sockets.push_back(tmp);
+/*	PRIVATE	*/
+void	Server::delete_socket(int fd, int i)
+{
+	close(fd);
+	this->_sockets.erase(this->_sockets.begin() + i);
+	this->_users.erase(this->_sockets[i].fd);
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -8,7 +9,7 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
-
+#include <map>
 #include "User.hpp"
 
 #define MAX_QUEUED 1000
@@ -21,8 +22,9 @@ class Server
 		struct sockaddr_in	_addr;
 		std::string			_password;
 		std::vector<pollfd>	_sockets;
-		std::vector<User>	_users;
+		std::map<int, User> _users;
 
+		void	delete_socket(int fd, int i);
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
 		Server(int port, std::string password);
@@ -33,7 +35,6 @@ class Server
 
 		/*	FUNCTIONS	*/
 		int		run();
-		void	authenticate(int new_socket);
 
 		/*	EXCEPTIONS	*/
 		class InvalidServerException

@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "poll.h"
 
@@ -7,17 +8,17 @@ class User
 	private:
 		std::string		_nick;
 		std::string		_user;
-		bool			_status;
+		bool			_auth;
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
-		User(std::string nick, std::string name);
+		User();
 		virtual ~User();
 
 		/*	GETTER	*/
 		std::string	getNick() const;
-		std::string getName() const;
+		std::string getUser() const;
 		/*	SETTER	*/
 		void setNick(std::string input);
-		void setName(std::string input);
+		void setUser(std::string input);
 };

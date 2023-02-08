@@ -1,4 +1,4 @@
-FILES:=	main Server
+FILES:=	main Server User
 NAME:= ircserv
 
 # ------------------

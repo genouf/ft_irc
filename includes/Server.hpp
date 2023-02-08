@@ -36,6 +36,5 @@ class Server
 
 		/*	FUNCTIONS	*/
 		int		run();
-		int		receive(int fd);
 };
 

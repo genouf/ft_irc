@@ -4,15 +4,27 @@
 /*	CONSTRUCTOR / DESTRUCTOR	*/
 Server::Server(int port, std::string password)
 {
-	this->_password = password;
+	int on = 1;
 
+	this->_password = password;
 	this->_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_sockfd < 0)
 	{
 		std::perror("Error creating socket");
 		exit(1);
 	}
-
+	if (setsockopt(this->_sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)))
+	{
+		std::perror("Setsockopt failed");
+		close(this->_sockfd);
+		exit(1);
+	}
+	if (fcntl(this->_sockfd, F_SETFL, O_NONBLOCK))
+	{
+		std::perror("Fcntl failed");
+		close(this->_sockfd);
+		exit(1);
+	}
 	this->_addr.sin_family = AF_INET;
 	this->_addr.sin_port = htons(port);
 	this->_addr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -53,6 +65,7 @@ int	Server::run()
 	while (42)
 	{
 		int ret = poll(this->_sockets.data(), this->_sockets.size(), -1);
+		std::cout << "NEW POLL" << std::endl;
 		if (ret < 0)
 		{
 			std::perror("Error polling");
@@ -61,8 +74,9 @@ int	Server::run()
 		current_size = this->_sockets.size();
 		for (size_t i = 0; i < current_size; i++)
 		{
-			//if (this->_sockets[i].revents == 0)
-			//	continue ;
+			std::cout << "Je regarde le socket numero : " << i << std::endl;
+			if (this->_sockets[i].revents == 0)
+				continue ;
 			if (this->_sockets[i].revents != POLLIN)
 			{
 				std::perror("Error about revents");
@@ -86,49 +100,35 @@ int	Server::run()
 						break;
 					}
 					struct pollfd	tmp = {new_socket, POLLIN, 0};
-					fcntl(new_socket, F_SETFL, O_NONBLOCK);
 					this->_sockets.push_back(tmp);
 					this->_users.insert(std::make_pair(new_socket, User()));
-					//while (ret > 0)
-					//{
-					//	ret = receive(new_socket);
-					//	if (ret == 0)
-					//	{
-					//		delete_socket(new_socket, i);
-					//		break ;
-					//	}
-					//}
-					// connection accepted
 					send(new_socket, ":127.0.0.1 001 test :LETS GO CA MARCHE\r\n", 41, 0);
 					std::cout << "New connection, socket fd is " << new_socket << std::endl;
 				} while (new_socket != -1);
 			}
 			else
-				receive(this->_sockets[i].fd);
+			{
+				char msg[1024];
+				int ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
+				if (ret < 0)
+				{
+					if (errno == EWOULDBLOCK || errno == EAGAIN)
+						return (1);
+					std::perror("Error receiving data");
+					return (1);
+				}
+				if (ret == 0)
+				{
+					delete_socket(this->_sockets[i].fd, i);
+					i--;
+					continue;
+				}
+				msg[ret] = '\0';
+				std::cout << "Data received from " << this->_sockets[i].fd << ": " << msg << std::endl;
+			}
 		}
 	}
 	return (0);
-}
-
-int	Server::receive(int fd)
-{
-	char msg[1024];
-	int ret = recv(fd, &msg, sizeof(msg), 0);
-	if (ret < 0)
-	{
-		if (errno == EWOULDBLOCK || errno == EAGAIN)
-			return (1);
-		std::perror("Error receiving data");
-		return (ret);
-	}
-	if (ret == 0)
-	{
-		std::cout << "Socket closed " << fd << std::endl;
-		return (ret);
-	}
-	msg[ret] = '\0';
-	std::cout << "Data received from " << fd << ": " << msg << std::endl;
-	return (ret);
 }
 
 

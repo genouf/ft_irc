@@ -13,10 +13,11 @@ class User
 		pollfd				_fd;
 		std::string			_ip;
 		std::string			_hostname;
-		
+
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
+		User();
 		User(pollfd fd, struct sockaddr_in addr);
 		virtual ~User();
 

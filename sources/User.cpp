@@ -1,6 +1,8 @@
 #include "../includes/User.hpp"
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
+User::User() : _nick(""), _user(""), _auth(false) { return ; }
+
 User::User(pollfd fd, struct sockaddr_in addr) : _nick("test"), _user(""), _auth(false), _fd(fd)
 {
 	_ip = inet_ntoa(addr.sin_addr);

@@ -109,8 +109,8 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["PASS"] = &Server::cmd_password;
 	this->_cmd_functions["LIST"] = &Server::cmd_list;
 	this->_cmd_functions["JOIN"] = &Server::cmd_join;
-	// this->_cmd_functions["NICK"] = &Server::cmd_nick;
-	// this->_cmd_functions["USER"] = &Server::cmd_user;
+	this->_cmd_functions["NICK"] = &Server::cmd_nick;
+	this->_cmd_functions["USER"] = &Server::cmd_user;
 	return ;
 }
 
@@ -212,10 +212,9 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		std::map<std::string, cmd_f>::iterator  	tmp_it;
 
 		tmp_it = this->_cmd_functions.find(tmp);
-		if (tmp_it == this->_cmd_functions.end())
-			break;
-		else
+		if (tmp_it != this->_cmd_functions.end())
 		{
+			std::cout << "$$$$ " << tmp << std::endl;
 			tmp_func = tmp_it->second;
 			(*it).erase((*it).begin());
 			if (!(this->*tmp_func)((*it), this->_users.find(user_fd)->second))
@@ -226,17 +225,23 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 
 int		Server::cmd_password(std::vector<std::string> params, User user)
 {
-	std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
 	std::string pass;
+	if (params[0].empty())
+	{
+		send(user.getFd().fd, ":127.0.0.1 464 PASS :Not enough parameters\r\n", 41, 0);
+		return (0);
+	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
 		pass = pass + *it;
-	if (pass != this->_password) //il faut check le password, pas d'espace...
+	//pass.pop_back();
+	std::cout << "### input passord : " << pass << " server password : " << this->_password << std::endl;
+	if (this->_password.compare(pass) != 0)
 	{
 		delete_socket(user.getFd());
 		return (0);
 	}
 	user.setAut(1);//Rajouter les codes retours
-	return (0);
+	return (1);
 }
 
 int		Server::cmd_nick(std::vector<std::string> params, User user)
@@ -257,7 +262,7 @@ int		Server::cmd_nick(std::vector<std::string> params, User user)
 int		Server::cmd_user(std::vector<std::string> params, User user)
 {
 	(void) user;
-	(void)params;
+	(void) params;
 	std::string name;
 	std::cout << "JE SUIS DANS LA CMD USER" << std::endl;
 

@@ -24,8 +24,11 @@ class User
 		/*	GETTER	*/
 		std::string	getNick() const;
 		std::string getUser() const;
+		int 		getAut() const ;
+		pollfd 		getFd() const;
+
 		/*	SETTER	*/
-		void		setNick(std::string input);
-		void		setUser(std::string input);
-		pollfd		getFd() const;
+		void setNick(std::string input);
+		void setUser(std::string input);
+		void setAut(bool input);
 };

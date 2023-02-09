@@ -22,9 +22,14 @@ std::string	User::getNick() const { return (this->_nick); }
 
 std::string	User::getUser() const { return (this->_user); }
 
-pollfd		User::getFd() const { return (this->_fd); }
+int 		User::getAut() const { return (this->_auth); }
+
+pollfd 		User::getFd() const { return (this->_fd); }
+
 
 /*	SETTER	*/
 void User::setNick(std::string input) { this->_nick = input; }
 
 void User::setUser(std::string input) { this->_user = input; }
+
+void User::setAut(bool input) { this->_auth = input; }

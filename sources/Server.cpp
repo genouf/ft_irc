@@ -234,7 +234,6 @@ int		Server::cmd_password(std::vector<std::string> params, User user)
 	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
 		pass = pass + *it;
-<<<<<<< HEAD
 	if (pass.find("\n") != std::string::npos)
 		pass.replace(pass.find("\n"), 1, "");
 	if (pass.find("\r") != std::string::npos)
@@ -243,13 +242,6 @@ int		Server::cmd_password(std::vector<std::string> params, User user)
 	{
 		send(user.getFd().fd, ":127.0.0.1 464 :Password incorrect\n", 41, 0);
 		delete_socket(user.getFd()); 
-=======
-	//pass.pop_back();
-	std::cout << "### input passord : " << pass << " server password : " << this->_password << std::endl;
-	if (this->_password.compare(pass) != 0)
-	{
-		delete_socket(user.getFd());
->>>>>>> 69b9030ac00412151fcf8982bb749bd652617847
 		return (0);
 	}
 	user.setAut(1);

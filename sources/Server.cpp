@@ -224,49 +224,45 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 
 int		Server::cmd_password(std::vector<std::string> params, User user)
 {
-	(void)params;
-	(void)user;
-	// std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
-	// std::string pass;
-	// // for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
-	// // 	pass = pass + *it;
-	// pass = params[0];
-	// if (pass != this->_password)
-	// {
-	// 	delete_socket(user.getFd()); 
-	// 	return (0);
-	// }
-	// user.setAut(1);//Rajouter les codes retours
-	// std::cout << "JE SORTIE DU CMD PASSWORD" << std::endl;
+	std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
+	std::string pass;
+	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
+		pass = pass + *it;
+	if (pass != this->_password) //il faut check le password, pas d'espace...
+	{
+		delete_socket(user.getFd()); 
+		return (0);
+	}
+	user.setAut(1);//Rajouter les codes retours
 	return (0);
 }
 
-// int		Server::cmd_nick(std::vector<std::string> params, User user)
-// {
-// 	std::string nick;
-// 	std::cout << "JE SUIS DANS LA CMD NICK" << std::endl;
-// 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
-// 		nick = nick + *it;
-// 	if (user.getAut())
-// 	{
-// 		user.setNick(nick);
-// 		// _nicks.push_back(nick); //Rajouter les codes retours
-// 		return (1);
-// 	}
-// 	return (0);
-// }
+int		Server::cmd_nick(std::vector<std::string> params, User user)
+{
+	std::string nick;
+	std::cout << "JE SUIS DANS LA CMD NICK" << std::endl;
+	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
+		nick = nick + *it;
+	if (user.getAut())
+	{
+		user.setNick(nick);
+		_nicks.push_back(nick); //Rajouter les codes retours
+		return (1);
+	}
+	return (0);
+}
 
-// int		Server::cmd_user(std::vector<std::string> params, User user)
-// {
-// 	(void) user;
-// 	std::string name;
-// 	std::cout << "JE SUIS DANS LA CMD USER" << std::endl;
-
-
-// 	// for (std::vector<std::string>::iterator it = params.begin() + 4; it != params.end(); it++)
-// 	// 	std::cout << *it << std::endl;
+int		Server::cmd_user(std::vector<std::string> params, User user)
+{
+	(void) user;
+	std::string name;
+	std::cout << "JE SUIS DANS LA CMD USER" << std::endl;
 
 
-// // USER cmarion cmarion 127.0.0.1 :Caroline MARION
-// 	return (0);
-// }
+	// for (std::vector<std::string>::iterator it = params.begin() + 4; it != params.end(); it++)
+	// 	std::cout << *it << std::endl;
+
+
+// USER cmarion cmarion 127.0.0.1 :Caroline MARION
+	return (0);
+}

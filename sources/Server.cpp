@@ -315,22 +315,24 @@ int		Server::cmd_join(std::vector<std::string> params, User user)
 	}
 	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
 	{
-		std::string tmp = it->first;
-		std::cout << params[0][params[0].size() - 2] << std::endl;
-		std::cout << params[0][params[0].size() - 1];
-		std::cout << "|" << std::endl;
-		//std::cout << "it->first :" << tmp << " | " << tmp.length() << std::endl;
-		//std::cout << "params[0] :" << params[0] << " | " << params[0].length() << std::endl;
-		std::cout << params[0].compare(it->first) << std::endl;
+		params[0] = params[0].substr(0, params[0].size() - 1);
 		if (it->first == params[0])
 		{
-			std::cout << "JE SUIS DANS LE IF" << std::endl;
-			msg.append("332 " + user.getNick());
+			it->second.addUser(user);
+			msg.append("332 " + user.getNick() + " ");
 			msg.append(params[0] + " :" + it->second.getTopic()).append("\r\n");
 			send(user.getFd().fd, &msg, sizeof(msg), 0);
 			std::cout << msg << std::endl;
-			send(user.getFd().fd, ":127.0.0.1 353 test = #channel :test\r\n", 40, 0);
-			send(user.getFd().fd, ":127.0.0.1 366 test #channel :End of /NAMES list\r\n", 51, 0);
+			std::vector<User> users = it->second.getUsers();
+			msg = ":127.0.0.1 353 " + user.getNick() + " = " + params[0] + " :";
+			for (std::vector<User>::iterator it = users.begin(); it != users.end(); it++)
+				msg.append(it->getNick() + " ");
+			msg.append("\r\n");
+			std::cout << msg << std::endl;
+			send(user.getFd().fd, &msg, sizeof(msg), 0);
+			msg = ":127.0.0.1 366 " + user.getNick() + " " + params[0] + " :End of /NAMES list\r\n";
+			std::cout << msg << std::endl;
+			send(user.getFd().fd, &msg, sizeof(msg), 0);
 			return (0);
 		}
 	}

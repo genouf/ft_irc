@@ -1,5 +1,6 @@
 #include "../includes/Server.hpp"
 #include "../includes/User.hpp"
+#include <algorithm>
 #include <string>
 #include <sstream>
 
@@ -106,15 +107,25 @@ int	Server::run()
 void	Server::init_cmd_functions()
 {
 	this->_cmd_functions["PASS"] = &Server::cmd_password;
+	// this->_cmd_functions["NICK"] = &Server::cmd_nick;
+	// this->_cmd_functions["USER"] = &Server::cmd_user;
 	return ;
 }
 
 /*	UTILS	*/
-void	Server::delete_socket(int fd, int i)
+bool operator==(const pollfd &lhs, const pollfd &rhs)
 {
-	close(fd);
-	this->_sockets.erase(this->_sockets.begin() + i);
-	this->_users.erase(this->_sockets[i].fd);
+    return lhs.fd == rhs.fd;
+}
+
+void	Server::delete_socket(pollfd pfd)
+{
+	std::vector<pollfd>::iterator	tmp;
+
+	close(pfd.fd);
+	tmp = std::find(this->_sockets.begin(), this->_sockets.end(), pfd);
+	this->_sockets.erase(tmp);
+	this->_users.erase(pfd.fd);
 }
 
 int		Server::new_socket()
@@ -138,7 +149,7 @@ int		Server::new_socket()
 		}
 		struct pollfd	tmp = {new_socket, POLLIN, 0};
 		this->_sockets.push_back(tmp);
-		this->_users.insert(std::make_pair(new_socket, User(new_socket, client_addr)));
+		this->_users.insert(std::make_pair(new_socket, User(tmp, client_addr)));
 		send(new_socket, ":127.0.0.1 001 test :LETS GO CA MARCHE\r\n", 41, 0);
 		std::cout << "New connection, socket fd is " << new_socket << std::endl;
 	} while (new_socket != -1);
@@ -160,7 +171,7 @@ int		Server::new_msg(int &i)
 	}
 	if (ret == 0)
 	{
-		delete_socket(this->_sockets[i].fd, i);
+		delete_socket(this->_sockets[i]);
 		i--;
 		return (2);
 	}
@@ -194,14 +205,19 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 {
 	for (std::vector<std::vector<std::string> >::iterator it = input.begin(); it != input.end(); it++)
 	{
-		std::string	tmp((*it)[0]);
-		cmd_f			tmp_func = 0;
+		std::string									tmp((*it)[0]);
+		cmd_f										tmp_func = 0;
+		std::map<std::string, cmd_f>::iterator  	tmp_it;
 
-		tmp_func = this->_cmd_functions.find(tmp)->second;
-		if (tmp_func != this->_cmd_functions.end()->second)
+		tmp_it = this->_cmd_functions.find(tmp);
+		if (tmp_it == this->_cmd_functions.end())
+			break;
+		else
 		{
+			tmp_func = tmp_it->second;
 			(*it).erase((*it).begin());
-			(this->*tmp_func)((*it), this->_users.find(user_fd)->second);
+			if (!(this->*tmp_func)((*it), this->_users.find(user_fd)->second))
+				break;
 		}
 	}
 }
@@ -210,6 +226,47 @@ int		Server::cmd_password(std::vector<std::string> params, User user)
 {
 	(void)params;
 	(void)user;
-	std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
+	// std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
+	// std::string pass;
+	// // for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
+	// // 	pass = pass + *it;
+	// pass = params[0];
+	// if (pass != this->_password)
+	// {
+	// 	delete_socket(user.getFd()); 
+	// 	return (0);
+	// }
+	// user.setAut(1);//Rajouter les codes retours
+	// std::cout << "JE SORTIE DU CMD PASSWORD" << std::endl;
 	return (0);
 }
+
+// int		Server::cmd_nick(std::vector<std::string> params, User user)
+// {
+// 	std::string nick;
+// 	std::cout << "JE SUIS DANS LA CMD NICK" << std::endl;
+// 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
+// 		nick = nick + *it;
+// 	if (user.getAut())
+// 	{
+// 		user.setNick(nick);
+// 		// _nicks.push_back(nick); //Rajouter les codes retours
+// 		return (1);
+// 	}
+// 	return (0);
+// }
+
+// int		Server::cmd_user(std::vector<std::string> params, User user)
+// {
+// 	(void) user;
+// 	std::string name;
+// 	std::cout << "JE SUIS DANS LA CMD USER" << std::endl;
+
+
+// 	// for (std::vector<std::string>::iterator it = params.begin() + 4; it != params.end(); it++)
+// 	// 	std::cout << *it << std::endl;
+
+
+// // USER cmarion cmarion 127.0.0.1 :Caroline MARION
+// 	return (0);
+// }

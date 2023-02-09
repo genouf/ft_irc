@@ -4,7 +4,7 @@
 
 int main()
 {
-	Server sock(6667, "");
+	Server sock(6667, "PASSWORD");
 
 	std::cout << "Socket created and binded" << std::endl;
 	std::cout << "Socket listening" << std::endl;

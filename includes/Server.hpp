@@ -35,13 +35,15 @@ class Server
 
 		void									init_cmd_functions();
 		/*	UTILS	*/
-		void									delete_socket(int fd, int i);
+		void									delete_socket(pollfd fd);
 		int										new_socket();
 		int										new_msg(int &i);
 		std::vector<std::vector<std::string> >	parsing_msg(std::string msg);
 		/*	CMD	*/
 		void	monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd);
 		int		cmd_password(std::vector<std::string> params, User user);
+		int		cmd_nick(std::vector<std::string> params, User user);
+		int		cmd_user(std::vector<std::string> params, User user);
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/

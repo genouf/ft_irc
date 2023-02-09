@@ -45,6 +45,7 @@ Server::Server(int port, std::string password)
 	}
 	struct pollfd tmp = {this->_sockfd, POLLIN, 0};
 	this->_sockets.push_back(tmp);
+	this->init_cmd_functions();
 	return ;
 }
 
@@ -101,6 +102,14 @@ int	Server::run()
 
 
 /*	PRIVATE	*/
+
+void	Server::init_cmd_functions()
+{
+	this->_cmd_functions["PASS"] = &Server::cmd_password;
+	return ;
+}
+
+/*	UTILS	*/
 void	Server::delete_socket(int fd, int i)
 {
 	close(fd);
@@ -158,11 +167,11 @@ int		Server::new_msg(int &i)
 	msg[ret] = '\0';
 	std::cout << "Data received from " << this->_sockets[i].fd << ": " << msg << std::endl;
 	std::string msg_s(msg);
-	this->parsing_msg(msg_s);
+	this->monitor_cmd(this->parsing_msg(msg_s), this->_sockets[i].fd);
 	return (0);
 }
 
-void	Server::parsing_msg(std::string msg)
+std::vector<std::vector<std::string> >	Server::parsing_msg(std::string msg)
 {
 	std::vector<std::vector<std::string> > 	big_v;
 	std::istringstream						sstream(msg);
@@ -177,4 +186,30 @@ void	Server::parsing_msg(std::string msg)
 			tmp.push_back(s2);
 		big_v.push_back(tmp);
 	}
+	return (big_v);
+}
+
+/*	CMD	*/
+void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd)
+{
+	for (std::vector<std::vector<std::string> >::iterator it = input.begin(); it != input.end(); it++)
+	{
+		std::string	tmp((*it)[0]);
+		cmd_f			tmp_func = 0;
+
+		tmp_func = this->_cmd_functions.find(tmp)->second;
+		if (tmp_func != this->_cmd_functions.end()->second)
+		{
+			(*it).erase((*it).begin());
+			(this->*tmp_func)((*it), this->_users.find(user_fd)->second);
+		}
+	}
+}
+
+int		Server::cmd_password(std::vector<std::string> params, User user)
+{
+	(void)params;
+	(void)user;
+	std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
+	return (0);
 }

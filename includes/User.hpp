@@ -10,20 +10,22 @@ class User
 		std::string			_nick;
 		std::string			_user;
 		bool				_auth;
-		int					_fd;
+		pollfd				_fd;
 		std::string			_ip;
 		std::string			_hostname;
-		
+
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
-		User(int fd, struct sockaddr_in addr);
+		User();
+		User(pollfd fd, struct sockaddr_in addr);
 		virtual ~User();
 
 		/*	GETTER	*/
 		std::string	getNick() const;
 		std::string getUser() const;
 		/*	SETTER	*/
-		void setNick(std::string input);
-		void setUser(std::string input);
+		void		setNick(std::string input);
+		void		setUser(std::string input);
+		pollfd		getFd() const;
 };

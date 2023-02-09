@@ -106,6 +106,8 @@ int	Server::run()
 void	Server::init_cmd_functions()
 {
 	this->_cmd_functions["PASS"] = &Server::cmd_password;
+	this->_cmd_functions["LIST"] = &Server::cmd_list;
+	this->_cmd_functions["JOIN"] = &Server::cmd_join;
 	return ;
 }
 
@@ -138,7 +140,7 @@ int		Server::new_socket()
 		}
 		struct pollfd	tmp = {new_socket, POLLIN, 0};
 		this->_sockets.push_back(tmp);
-		this->_users.insert(std::make_pair(new_socket, User(new_socket, client_addr)));
+		this->_users.insert(std::make_pair(new_socket, User(tmp, client_addr)));
 		send(new_socket, ":127.0.0.1 001 test :LETS GO CA MARCHE\r\n", 41, 0);
 		std::cout << "New connection, socket fd is " << new_socket << std::endl;
 	} while (new_socket != -1);
@@ -201,7 +203,8 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		if (tmp_func != this->_cmd_functions.end()->second)
 		{
 			(*it).erase((*it).begin());
-			(this->*tmp_func)((*it), this->_users.find(user_fd)->second);
+			if (!(this->*tmp_func)((*it), this->_users.find(user_fd)->second))
+				break;
 		}
 	}
 }
@@ -211,5 +214,72 @@ int		Server::cmd_password(std::vector<std::string> params, User user)
 	(void)params;
 	(void)user;
 	std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
+	return (0);
+}
+
+int		Server::cmd_list(std::vector<std::string> params, User user)
+{
+	(void)params;
+	std::cout << "JE SUIS DANS LE CMD LIST" << std::endl;
+	//for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
+	//	std::cout << *it << std::endl;
+	std::string	msg = ":127.0.0.1 322 ";
+	msg.append(user.getNick()).append(" ");
+	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+	{
+		msg.append(it->first);
+		msg.append(" :");
+		msg.append(it->second.getTopic());
+		msg.append("\r\n");
+	}
+	std::cout << msg << std::endl;
+
+	send(user.getFd().fd, &msg, sizeof(msg), 0);
+	send(user.getFd().fd, ":127.0.0.1 323 test :End of /LIST\r\n", 36, 0);
+	return (0);
+}
+
+int		Server::cmd_join(std::vector<std::string> params, User user)
+{
+	std::cout << "JE SUIS DANS LE CMD JOIN" << std::endl;
+	Channel channel;
+	channel.setName("#channel");
+	channel.setTopic("Topic test");
+	this->_channels.insert(std::make_pair(channel.getName(), channel));
+
+
+	std::string msg = ":127.0.0.1 ";
+	if (params.size() == 0)
+	{
+		msg.append("461 JOIN :Not enough parameters\r\n");
+		send(user.getFd().fd, &msg, sizeof(msg), 0);
+		return (0);
+	}
+	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+	{
+		std::string tmp = it->first;
+		std::cout << params[0][params[0].size() - 2] << std::endl;
+		std::cout << params[0][params[0].size() - 1];
+		std::cout << "FIN|" << std::endl;
+		//std::cout << "it->first :" << tmp << " | " << tmp.length() << std::endl;
+		//std::cout << "params[0] :" << params[0] << " | " << params[0].length() << std::endl;
+		std::cout << params[0].compare(it->first) << std::endl;
+		if (it->first == params[0])
+		{
+			std::cout << "JE SUIS DANS LE IF" << std::endl;
+			msg.append("332 " + user.getNick());
+			msg.append(params[0] + " :" + it->second.getTopic()).append("\r\n");
+			send(user.getFd().fd, &msg, sizeof(msg), 0);
+			std::cout << msg << std::endl;
+			send(user.getFd().fd, ":127.0.0.1 353 test = #channel :test\r\n", 40, 0);
+			send(user.getFd().fd, ":127.0.0.1 366 test #channel :End of /NAMES list\r\n", 51, 0);
+			return (0);
+		}
+	}
+
+	//send(user.getFd().fd, ":127.0.0.1 332 test #channel1 :Premier channel du serveur !\r\n", 62, 0);
+	//send(user.getFd().fd, ":127.0.0.1 353 test = #channel1 :test\r\n", 40, 0);
+	//send(user.getFd().fd, ":127.0.0.1 366 test #channel1 :End of NAMES list\r\n", 51, 0);
+
 	return (0);
 }

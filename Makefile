@@ -1,4 +1,4 @@
-FILES:=	main Server User
+FILES:=	main Server User Channel
 NAME:= ircserv
 
 # ------------------

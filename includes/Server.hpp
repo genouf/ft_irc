@@ -15,10 +15,12 @@
 #include <fcntl.h>
 #include <poll.h>
 #include "User.hpp"
+#include "Channel.hpp"
 
 #define MAX_QUEUED 1000
 
 class User;
+class Channel;
 
 class Server
 {
@@ -32,6 +34,7 @@ class Server
 		std::map<int, User>				_users;
 		std::vector<std::string>		_nicks;
 		std::map<std::string, cmd_f>	_cmd_functions;
+		std::map<std::string, Channel>	_channels;
 
 		void									init_cmd_functions();
 		/*	UTILS	*/
@@ -42,6 +45,8 @@ class Server
 		/*	CMD	*/
 		void	monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd);
 		int		cmd_password(std::vector<std::string> params, User user);
+		int		cmd_list(std::vector<std::string> params, User user);
+		int		cmd_join(std::vector<std::string> params, User user);
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/

@@ -225,23 +225,35 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 
 int		Server::cmd_password(std::vector<std::string> params, User user)
 {
+	std::cout << "JE SUIS DANS LE CMD PASSWORD" << std::endl;
 	std::string pass;
 	if (params[0].empty())
 	{
-		send(user.getFd().fd, ":127.0.0.1 464 PASS :Not enough parameters\r\n", 41, 0);
+		send(user.getFd().fd, ":127.0.0.1 461 PASS :Not enough parameters\r\n", 41, 0);
 		return (0);
 	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
 		pass = pass + *it;
+<<<<<<< HEAD
+	if (pass.find("\n") != std::string::npos)
+		pass.replace(pass.find("\n"), 1, "");
+	if (pass.find("\r") != std::string::npos)
+		pass.replace(pass.find("\r"), 1, "");
+	if (this->_password.compare(pass) != 0)
+	{
+		send(user.getFd().fd, ":127.0.0.1 464 :Password incorrect\n", 41, 0);
+		delete_socket(user.getFd()); 
+=======
 	//pass.pop_back();
 	std::cout << "### input passord : " << pass << " server password : " << this->_password << std::endl;
 	if (this->_password.compare(pass) != 0)
 	{
 		delete_socket(user.getFd());
+>>>>>>> 69b9030ac00412151fcf8982bb749bd652617847
 		return (0);
 	}
-	user.setAut(1);//Rajouter les codes retours
-	return (1);
+	user.setAut(1);
+	return (1);//question pour le code ERR_ALREADYREGISTERED (462)
 }
 
 int		Server::cmd_nick(std::vector<std::string> params, User user)
@@ -250,6 +262,17 @@ int		Server::cmd_nick(std::vector<std::string> params, User user)
 	std::cout << "JE SUIS DANS LA CMD NICK" << std::endl;
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
 		nick = nick + *it;
+	if (nick.find("\n") != std::string::npos)
+		nick.replace(nick.find("\n"), 1, "");
+	if (nick.find("\r") != std::string::npos)
+		nick.replace(nick.find("\r"), 1, "");
+	// if (nick.find_last_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-") != std::string::npos)
+	// {
+	// 	std::cout << "###################3" << std::endl;
+	// 	send(user.getFd().fd, ":127.0.0.1 432 :<nick> :Erroneus nickname\n", 41, 0);
+	// 	delete_socket(user.getFd()); 
+	// 	return (0);
+	// }
 	if (user.getAut())
 	{
 		user.setNick(nick);

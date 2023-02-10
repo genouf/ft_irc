@@ -15,8 +15,8 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 		{
 			if (it->second.isUserInChannel(user))
 			{
-				for (std::vector<User>::iterator it2 = it->second.getUsers().begin(); it2 != it->second.getUsers().end(); it2++)
-					send_client(":" + user.getNick() + " PART " + params[i] + "", it2->getFd());
+				for (std::map<int, User*>::iterator it2 = it->second.getUsers().begin(); it2 != it->second.getUsers().end(); it2++)
+					send_client(":" + user.getNick() + " PART " + params[i] + "", it2->second->getFd());
 				it->second.removeUser(user);
 				return (0);
 			}

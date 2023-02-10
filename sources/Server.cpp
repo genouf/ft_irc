@@ -120,6 +120,13 @@ bool operator==(const pollfd &lhs, const pollfd &rhs)
     return lhs.fd == rhs.fd;
 }
 
+void	Server::send_client(std::string msg, int fd)
+{
+	msg.append("\r\n");
+	send(fd, msg.c_str(), msg.size(), 0);
+	return ;
+}
+
 void	Server::delete_socket(pollfd pfd)
 {
 	std::vector<pollfd>::iterator	tmp;
@@ -128,6 +135,12 @@ void	Server::delete_socket(pollfd pfd)
 	tmp = std::find(this->_sockets.begin(), this->_sockets.end(), pfd);
 	this->_sockets.erase(tmp);
 	this->_users.erase(pfd.fd);
+}
+
+void	Server::disconnect(User user)
+{
+	this->send_client(":127.0.0.1 ERROR : You have been disconnected.", user.getFd().fd);
+	this->delete_socket(user.getFd());
 }
 
 int		Server::new_socket()
@@ -209,8 +222,26 @@ std::vector<std::vector<std::string> >	Server::parsing_msg(std::string msg)
 }
 
 /*	CMD	*/
+bool	Server::check_pass(std::vector<std::vector<std::string> > input)
+{
+	for (std::vector<std::vector<std::string> >::iterator it = input.begin(); it != input.end(); it++)
+	{
+		if ((*it)[0] == "PASS")
+			return (true);
+	}
+	return (false);
+}
+
 void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd)
 {
+	User user = this->_users.find(user_fd)->second;
+
+	if (user.getAut() == false && !this->check_pass(input))
+	{
+		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd().fd);
+		this->disconnect(user);
+		return ;
+	}
 	for (std::vector<std::vector<std::string> >::iterator it = input.begin(); it != input.end(); it++)
 	{
 		std::string									tmp((*it)[0]);
@@ -222,7 +253,7 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		{
 			tmp_func = tmp_it->second;
 			(*it).erase((*it).begin());
-			if (!(this->*tmp_func)((*it), this->_users.find(user_fd)->second))
+			if (!(this->*tmp_func)((*it), user))
 				break;
 		}
 	}

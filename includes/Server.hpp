@@ -38,11 +38,14 @@ class Server
 
 		void									init_cmd_functions();
 		/*	UTILS	*/
+		void									send_client(std::string msg, int fd);
 		void									delete_socket(pollfd fd);
+		void									disconnect(User user);
 		int										new_socket();
 		int										new_msg(int &i);
 		std::vector<std::vector<std::string> >	parsing_msg(std::string msg);
 		/*	CMD	*/
+		bool	check_pass(std::vector<std::vector<std::string> > input);
 		void	monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd);
 		int		cmd_password(std::vector<std::string> params, User &user);
 		int		cmd_list(std::vector<std::string> params, User &user);

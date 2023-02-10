@@ -265,7 +265,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	std::string pass;
 	if (params[0].empty())
 	{
-		send(user.getFd(), ":127.0.0.1 461 PASS : Not enough parameters\r\n", 41, 0);
+		this->send_client(":127.0.0.1 461 PASS : Not enough parameters", user.getFd());
 		return (0);
 	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
@@ -273,7 +273,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	if (this->_password != pass)
 	{
 		std::cout << "PASSWORD INCORRECT" << std::endl;
-		send(user.getFd(), ":127.0.0.1 464 : Password incorrect\r\n", 37, 0);
+		this->send_client(":127.0.0.1 464 : Password incorrect", user.getFd());
 		delete_socket(user.getPollFd());
 		return (0);
 	}
@@ -281,7 +281,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	{
 		user.setAut(true);
 		std::cout << "PASSWORD CORRECT" << std::endl;
-		send(user.getFd(), ":127.0.0.1 001 : GG vous etes connecte\r\n", 41, 0);
+		this->send_client(":127.0.0.1 001 : GG vous etes connecte", user.getFd());
 	}
 	return (1);//question pour le code ERR_ALREADYREGISTERED (462)
 }
@@ -292,8 +292,8 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 	if (params.size() == 0)
 	{
 		std::cout << "BAD NICK" << std::endl;
-		send(user.getFd().fd, ":127.0.0.1 431 :No nickname given\r\n", 41, 0);
-		delete_socket(user.getFd());
+		this->send_client(":127.0.0.1 431 :No nickname given", user.getFd());
+		delete_socket(user.getPollFd());
 		return (0);
 	}
 	if (user.getAut() == true)
@@ -302,15 +302,15 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 		{
 			std::cout << "BAD NICK" << std::endl;
 			std::string sret = ":127.0.0.1 432 " + params[0] + " :Erroneus nickname\r\n";
-			send(user.getFd().fd, sret.c_str(), sret.size(), 0);
-			delete_socket(user.getFd());
+			this->send_client(sret, user.getFd());
+			delete_socket(user.getPollFd());
 			return (0);
 		}
 		if (find(this->_nicks.begin(), this->_nicks.end(), params[0]) != this->_nicks.end())
 		{
 			std::cout << "BAD NICK" << std::endl;
-			send(user.getFd().fd, ":127.0.0.1 433 :Nickname is already in use\r\n", 41, 0); //<client> <nick> :Nickname is already in use
-			delete_socket(user.getFd());
+			this->send_client(":127.0.0.1 433 :Nickname is already in use", user.getFd());
+			delete_socket(user.getPollFd());
 			return (0);
 		}
 
@@ -370,9 +370,9 @@ int		Server::cmd_list(std::vector<std::string> params, User &user)
 		msg.append(it->second.getTopic());
 		msg.append("\r\n");
 		std::cout << msg << std::endl;
-		send(user.getFd(), msg.c_str(), msg.length(), 0);
+		this->send_client(msg, user.getFd());
 	}
-	send(user.getFd(), ":127.0.0.1 323 test :End of channel list\r\n", 60, 0);
+	this->send_client(":127.0.0.1 323 test :End of channel list", user.getFd());
 	return (0);
 }
 
@@ -389,7 +389,7 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 	if (params.size() == 0)
 	{
 		msg.append("461 JOIN :Not enough parameters\r\n");
-		send(user.getFd(), &msg, sizeof(msg), 0);
+		this->send_client(msg, user.getFd());
 		return (0);
 	}
 	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
@@ -399,7 +399,7 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 			it->second.addUser(user);
 			msg.append("332 " + user.getNick() + " ");
 			msg.append(params[0] + " :" + it->second.getTopic()).append("\r\n");
-			send(user.getFd(), &msg, sizeof(msg), 0);
+			this->send_client(msg, user.getFd());
 			std::cout << msg << std::endl;
 
 			std::vector<User> users = it->second.getUsers();
@@ -409,10 +409,10 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 			msg.append("\r\n");
 			std::cout << msg << std::endl;
 
-			send(user.getFd(), &msg, sizeof(msg), 0);
+			this->send_client(msg, user.getFd());
 			msg = ":127.0.0.1 366 " + user.getNick() + " " + params[0] + " :End of /NAMES list\r\n";
 			std::cout << msg << std::endl;
-			send(user.getFd(), &msg, sizeof(msg), 0);
+			this->send_client(msg, user.getFd());
 			return (0);
 		}
 	}

@@ -24,6 +24,7 @@ class Channel
 		void				setTopic(std::string topic);
 
 		/*	FUNCTIONS	*/
+		bool				isUserInChannel(User user);
 		void				addUser(User user);
 		void				removeUser(User user);
 		void				removeUser(std::string nick);

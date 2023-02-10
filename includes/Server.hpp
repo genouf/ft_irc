@@ -48,10 +48,14 @@ class Server
 		bool	check_pass(std::vector<std::vector<std::string> > input);
 		void	monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd);
 		int		cmd_password(std::vector<std::string> params, User &user);
-		int		cmd_list(std::vector<std::string> params, User &user);
-		int		cmd_join(std::vector<std::string> params, User &user);
 		int		cmd_nick(std::vector<std::string> params, User &user);
 		int		cmd_user(std::vector<std::string> params, User &user);
+
+		// Channel
+		int		cmd_list(std::vector<std::string> params, User &user);
+		int		cmd_join(std::vector<std::string> params, User &user);
+		int		cmd_part(std::vector<std::string> params, User &user);
+		int		cmd_topic(std::vector<std::string> params, User &user);
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/

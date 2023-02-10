@@ -30,3 +30,13 @@ void Channel::removeUser(std::string nick)
 	}
 }
 
+bool Channel::isUserInChannel(User user)
+{
+	for (std::map<int, User>::const_iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		if (it->second.getNick() == user.getNick())
+			return (true);
+	}
+	return (false);
+}
+

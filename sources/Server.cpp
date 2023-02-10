@@ -107,10 +107,14 @@ int	Server::run()
 void	Server::init_cmd_functions()
 {
 	this->_cmd_functions["PASS"] = &Server::cmd_password;
-	this->_cmd_functions["LIST"] = &Server::cmd_list;
-	this->_cmd_functions["JOIN"] = &Server::cmd_join;
 	this->_cmd_functions["NICK"] = &Server::cmd_nick;
 	this->_cmd_functions["USER"] = &Server::cmd_user;
+
+	// Channel
+	this->_cmd_functions["LIST"] = &Server::cmd_list;
+	this->_cmd_functions["JOIN"] = &Server::cmd_join;
+	this->_cmd_functions["PART"] = &Server::cmd_part;
+	this->_cmd_functions["TOPIC"] = &Server::cmd_topic;
 	return ;
 }
 
@@ -300,9 +304,9 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 		this->disconnect(user);
 		return (0);
 	}
-	if (user.getAut() == true)
+	if (user.getAut() == false)
 	{
-		if (params.size() > 1 || params[0].find_first_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-", 0) != std::string::npos)
+		if (params.size() > 1 || params[0].find_first_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-_", 0) != std::string::npos)
 		{
 			std::cout << "BAD NICK" << std::endl;
 			std::string sret = ":127.0.0.1 432 " + params[0] + " :Erroneus nickname\r\n";
@@ -333,89 +337,12 @@ int		Server::cmd_user(std::vector<std::string> params, User &user)
 	std::string name;
 	std::cout << "JE SUIS DANS LA CMD USER" << std::endl;
 	user._auth_ok.user = true;
-
+	user.setAut(true);
+	this->send_client(":127.0.0.1 001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[!" + user.getUser() + "@" + "127.0.0.1]", user.getFd());
 	// for (std::vector<std::string>::iterator it = params.begin() + 4; it != params.end(); it++)
 	// 	std::cout << *it << std::endl;
 
 
-// USER cmarion cmarion 127.0.0.1 :Caroline MARION
-	return (0);
-}
-
-int		Server::cmd_list(std::vector<std::string> params, User &user)
-{
-	(void)params;
-	Channel channel;
-	channel.setName("");
-	channel.setTopic("");
-	Channel channel2;
-	channel2.setName("#channel");
-	channel2.setTopic("Topic");
-	Channel channel3;
-	channel3.setName("#channel2");
-	channel3.setTopic("Topic2");
-	this->_channels.insert(std::make_pair(channel.getName(), channel));
-	this->_channels.insert(std::make_pair(channel2.getName(), channel2));
-	this->_channels.insert(std::make_pair(channel3.getName(), channel3));
-
-	std::cout << "[CMD LIST] send to " << user.getNick() << " on fd " << user.getFd() << std::endl;
-
-	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
-	{
-		std::string	msg = ":127.0.0.1 322 ";
-		msg.append(user.getNick()).append(" ");
-		msg.append(it->first);
-		msg.append(" 0");
-		msg.append(" :");
-		msg.append(it->second.getTopic());
-		msg.append("\r\n");
-		std::cout << msg << std::endl;
-		this->send_client(msg, user.getFd());
-	}
-	this->send_client(":127.0.0.1 323 test :End of channel list", user.getFd());
-	return (0);
-}
-
-int		Server::cmd_join(std::vector<std::string> params, User &user)
-{
-	std::cout << "JE SUIS DANS LE CMD JOIN" << std::endl;
-	Channel channel;
-	channel.setName("#channel");
-	channel.setTopic("Topic test");
-	this->_channels.insert(std::make_pair(channel.getName(), channel));
-
-
-	std::string msg = ":127.0.0.1 ";
-	if (params.size() == 0)
-	{
-		msg.append("461 JOIN :Not enough parameters\r\n");
-		this->send_client(msg, user.getFd());
-		return (0);
-	}
-	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
-	{
-		if (it->first == params[0])
-		{
-			it->second.addUser(user);
-			msg.append("332 " + user.getNick() + " ");
-			msg.append(params[0] + " :" + it->second.getTopic()).append("\r\n");
-			this->send_client(msg, user.getFd());
-			std::cout << msg << std::endl;
-
-			std::vector<User> users = it->second.getUsers();
-			msg = ":127.0.0.1 353 " + user.getNick() + " = " + params[0] + " :";
-			for (std::vector<User>::iterator it = users.begin(); it != users.end(); it++)
-				msg.append(it->getNick() + " ");
-			msg.append("\r\n");
-			std::cout << msg << std::endl;
-
-			this->send_client(msg, user.getFd());
-			msg = ":127.0.0.1 366 " + user.getNick() + " " + params[0] + " :End of /NAMES list\r\n";
-			std::cout << msg << std::endl;
-			this->send_client(msg, user.getFd());
-			return (0);
-		}
-	}
-
+	// USER cmarion cmarion 127.0.0.1 :Caroline MARION
 	return (0);
 }

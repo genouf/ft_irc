@@ -234,7 +234,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	std::string pass;
 	if (params[0].empty())
 	{
-		send(user.getFd().fd, ":127.0.0.1 461 PASS : Not enough parameters\r\n", 41, 0);
+		send(user.getFd().fd, ":127.0.0.1 461 PASS :Not enough parameters\r\n", 41, 0);
 		return (0);
 	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
@@ -242,7 +242,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	if (this->_password != pass)
 	{
 		std::cout << "PASSWORD INCORRECT" << std::endl;
-		send(user.getFd().fd, ":127.0.0.1 464 : Password incorrect\r\n", 37, 0);
+		send(user.getFd().fd, ":127.0.0.1 464 :Password incorrect\r\n", 37, 0);
 		delete_socket(user.getFd());
 		return (0);
 	}
@@ -250,31 +250,42 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	{
 		user.setAut(true);
 		std::cout << "PASSWORD CORRECT" << std::endl;
-		send(user.getFd().fd, ":127.0.0.1 001 : GG vous etes connecte\r\n", 41, 0);
+		send(user.getFd().fd, ":127.0.0.1 001 :GG vous etes connecte\r\n", 41, 0);
 	}
 	return (1);//question pour le code ERR_ALREADYREGISTERED (462)
 }
 
 int		Server::cmd_nick(std::vector<std::string> params, User &user)
 {
-	std::string nick;
 	std::cout << "JE SUIS DANS LA CMD NICK" << std::endl;
-	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
-		nick = nick + *it;
-
-	// if (nick.find_last_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-") != std::string::npos)
-	// {
-	// 	std::cout << "###################3" << std::endl;
-	// 	send(user.getFd().fd, ":127.0.0.1 432 :<nick> :Erroneus nickname\n", 41, 0);
-	// 	delete_socket(user.getFd());
-	// 	return (0);
-	// }
-	(void) params;
+	if (params.size() == 0)
+	{
+		std::cout << "BAD NICK" << std::endl;
+		send(user.getFd().fd, ":127.0.0.1 431 :No nickname given\r\n", 41, 0);
+		delete_socket(user.getFd());
+		return (0);
+	}
 	if (user.getAut() == true)
 	{
+		if (params.size() > 1 || params[0].find_first_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-", 0) != std::string::npos)
+		{
+			std::cout << "BAD NICK" << std::endl;
+			std::string sret = ":127.0.0.1 432 " + params[0] + " :Erroneus nickname\r\n";
+			send(user.getFd().fd, sret.c_str(), sret.size(), 0);
+			delete_socket(user.getFd());
+			return (0);
+		}
+		if (find(this->_nicks.begin(), this->_nicks.end(), params[0]) != this->_nicks.end())
+		{
+			std::cout << "BAD NICK" << std::endl;
+			send(user.getFd().fd, ":127.0.0.1 433 :Nickname is already in use\r\n", 41, 0); //<client> <nick> :Nickname is already in use
+			delete_socket(user.getFd());
+			return (0);
+		}
+
 		std::cout << "GOOD NICK" << std::endl;
-		user.setNick(nick);
-		_nicks.push_back(nick); //Rajouter les codes retours
+		user.setNick(params[0]);
+		_nicks.push_back(params[0]); //Rajouter les codes retours
 		return (1);
 	}
 	else

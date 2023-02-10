@@ -260,7 +260,7 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 	if (user.getAut() == false && user._auth_ok.authentificated())
 	{
 		user.setAut(true);
-		this->send_client(":127.0.0.1 001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[!" + user.getUser() + "@" + "127.0.0.1]", user.getFd());
+		this->send_client(":127.0.0.1 001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[!" + user.getUsername() + "@" + "127.0.0.1]", user.getFd());
 	}
 }
 
@@ -313,8 +313,13 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 		std::cout << "BAD NICK" << std::endl;
 		std::string sret = ":127.0.0.1 433 " + params[0] + " :Nickname is already in use\r\n";
 		this->send_client(sret, user.getFd());
-		this->disconnect(user);
-		return (0);
+		if (!user.getAut())
+		{
+			this->disconnect(user);
+			return (0);
+		}
+		else
+			return (1);
 	}
 	std::cout << "GOOD NICK" << std::endl;
 	user._auth_ok.nick = true;
@@ -330,24 +335,36 @@ int		Server::cmd_user(std::vector<std::string> params, User &user)
 	{
 		this->send_client(":127.0.0.1 462 :You may not reregister", user.getFd());
 	}
-	std::string name;
-	name = params.back();
-	params.pop_back();
-	name = params.back() + " " + name;
-	name.erase(0, 1);
-	params.pop_back();
-	if (name.empty())
+	if (params.size() < 5)
 	{
 		std::cout << "TOO SMALL NAME" << std::endl;
 		this->send_client(":127.0.0.1 433 USER :Not enough parameters", user.getFd());
 		this->disconnect(user);
 		return (0);
 	}
-	user.setUser(name);
+	std::string name;
+	name = params.back();
+	params.pop_back();
+	if (params.back()[0] == ':')
+	{
+		name = params.back() + " " + name;
+		name.erase(0, 1);
+		params.pop_back();
+	}
 	user.setIp(params.back());
+	params.pop_back();
+	if (name.size() < 1 || params.back().size() < 1)
+	{
+		std::cout << "TOO SMALL NAME" << std::endl;
+		this->send_client(":127.0.0.1 433 USER :Not enough parameters", user.getFd());
+		this->disconnect(user);
+		return (0);
+	}
+	user.setRealname(name);
+	user.setUsername(params.back());
 	user.setAut(true);
 	user._auth_ok.user = true;
-	// std::cout << user.getUser() << " " << user.getIp() << std::endl;
+	std::cout << user.getUsername() << " " << user.getRealname() << " " << user.getIp() << std::endl;
 	return (0);
 }
 

@@ -1,9 +1,9 @@
 #include "../includes/User.hpp"
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
-User::User() : _nick(""), _user(""), _auth(false) { return ; }
+User::User() : _nick(""), _username(""), _auth(false) { return ; }
 
-User::User(pollfd fd, struct sockaddr_in addr) : _nick("test"), _user(""), _auth(false), _fd(fd)
+User::User(pollfd fd, struct sockaddr_in addr) : _nick("test"), _username(""), _auth(false), _fd(fd)
 {
 	_ip = inet_ntoa(addr.sin_addr);
 	char hostname[1024];
@@ -20,7 +20,9 @@ User::~User() { return ; }
 /*	GETTER	*/
 std::string	User::getNick() const { return (this->_nick); }
 
-std::string	User::getUser() const { return (this->_user); }
+std::string	User::getUsername() const { return (this->_username); }
+
+std::string	User::getRealname() const { return (this->_realname); }
 
 int 		User::getAut() const { return (this->_auth); }
 
@@ -34,7 +36,9 @@ std::string User::getIp() const { return (this->_ip); }
 /*	SETTER	*/
 void User::setNick(std::string input) { this->_nick = input; }
 
-void User::setUser(std::string input) { this->_user = input; }
+void User::setUsername(std::string input) { this->_username = input; }
+
+void User::setRealname(std::string input) { this->_realname = input; }
 
 void User::setAut(bool input) { this->_auth = input; }
 

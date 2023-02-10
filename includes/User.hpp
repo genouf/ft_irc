@@ -31,7 +31,8 @@ class User
 
 		/*	PRIVATE MEMBER VAR	*/
 		std::string			_nick;
-		std::string			_user;
+		std::string			_username;
+		std::string			_realname;
 		bool				_auth;
 		pollfd				_fd;
 		std::string			_ip;
@@ -45,7 +46,8 @@ class User
 
 		/*	GETTER	*/
 		std::string	getNick() const;
-		std::string getUser() const;
+		std::string getUsername() const;
+		std::string getRealname() const;
 		int 		getAut() const ;
 		pollfd		getPollFd() const;
 		int 		getFd() const;
@@ -53,7 +55,8 @@ class User
 
 		/*	SETTER	*/
 		void setNick(std::string input);
-		void setUser(std::string input);
+		void setUsername(std::string input);
+		void setRealname(std::string input);		
 		void setAut(bool input);
 		void setIp(std::string ip);
 

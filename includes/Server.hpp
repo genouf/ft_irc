@@ -12,6 +12,9 @@
 #include <cstring>
 #include <vector>
 #include <map>
+#include <string>
+#include <algorithm>
+#include <sstream>
 #include <fcntl.h>
 #include <poll.h>
 #include "User.hpp"

@@ -1,4 +1,4 @@
-FILES:=	main Server User Channel Command/Channel/join Command/Channel/list Command/Channel/part
+FILES:=	main Server User Channel Command/Channel/join Command/Channel/list Command/Channel/part  Command/Channel/topic Command/Channel/connection
 NAME:= ircserv
 
 # ------------------

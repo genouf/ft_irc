@@ -47,6 +47,8 @@ class Server
 		int										new_socket();
 		int										new_msg(int &i);
 		std::vector<std::vector<std::string> >	parsing_msg(std::string msg);
+		std::vector<std::string> params_channel(std::string params);
+
 		/*	CMD	*/
 		bool	check_pass(std::vector<std::vector<std::string> > input);
 		void	monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd);

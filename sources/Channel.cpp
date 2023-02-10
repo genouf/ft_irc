@@ -1,15 +1,19 @@
 #include "../includes/Channel.hpp"
 
+/*	CONSTRUCTOR AND DESTRUCTOR	*/
 Channel::Channel() {}
 Channel::~Channel() {}
 
+/*	GETTER	*/
 std::string const &Channel::getName() const { return(this->_name); }
 std::string const &Channel::getTopic() const { return(this->_topic); }
 std::map<int, User*> &Channel::getUsers() { return (this->_users); }
 
+/*	SETTER	*/
 void Channel::setName(std::string const &name) { this->_name = name; }
 void Channel::setTopic(std::string topic) { this->_topic = topic; }
 
+/*	ADD OR REMOVE	*/
 void Channel::addUser(User *user) { this->_users[user->getFd()] = user; }
 void Channel::removeUser(User user) { this->_users.erase(this->_users.find(user.getFd())); }
 void Channel::removeUser(std::string nick)
@@ -24,6 +28,7 @@ void Channel::removeUser(std::string nick)
 	}
 }
 
+/*	INFO	*/
 bool Channel::isUserInChannel(User user)
 {
 	for (std::map<int, User*>::const_iterator it = this->_users.begin(); it != this->_users.end(); it++)
@@ -33,4 +38,3 @@ bool Channel::isUserInChannel(User user)
 	}
 	return (false);
 }
-

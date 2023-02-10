@@ -75,6 +75,7 @@ int	Server::run()
 			if (this->_sockets[i].revents != POLLIN)
 			{
 				std::perror("Error about revents");
+				this->delete_socket(this->_sockets[i]);
 				return (1);
 			}
 			if (this->_sockets[i].fd == this->_sockfd)
@@ -224,6 +225,23 @@ std::vector<std::vector<std::string> >	Server::parsing_msg(std::string msg)
 		big_v.push_back(tmp);
 	}
 	return (big_v);
+}
+
+std::vector<std::string> Server::params_channel(std::string params)
+{
+	std::vector<std::string> 	result;
+	std::istringstream			sstream(params);
+	std::string					s;
+
+	while(std::getline(sstream, s, ','))
+	{
+		if (s.find("\n") != std::string::npos)
+			s.replace(s.find("\n"), 1, "");
+		if (s.find("\r") != std::string::npos)
+			s.replace(s.find("\r"), 1, "");
+		result.push_back(s);
+	}
+	return (result);
 }
 
 /*	CMD	*/

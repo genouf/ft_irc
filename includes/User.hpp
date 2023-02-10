@@ -49,11 +49,13 @@ class User
 		int 		getAut() const ;
 		pollfd		getPollFd() const;
 		int 		getFd() const;
+		std::string	getIp() const;
 
 		/*	SETTER	*/
 		void setNick(std::string input);
 		void setUser(std::string input);
 		void setAut(bool input);
+		void setIp(std::string ip);
 
 		auth_ok				_auth_ok;
 };

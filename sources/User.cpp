@@ -28,6 +28,8 @@ pollfd 		User::getPollFd() const { return (this->_fd); }
 
 int 		User::getFd() const { return (this->_fd.fd); }
 
+std::string User::getIp() const { return (this->_ip); }
+
 
 /*	SETTER	*/
 void User::setNick(std::string input) { this->_nick = input; }
@@ -35,3 +37,5 @@ void User::setNick(std::string input) { this->_nick = input; }
 void User::setUser(std::string input) { this->_user = input; }
 
 void User::setAut(bool input) { this->_auth = input; }
+
+void User::setIp(std::string input) { this->_ip = input; }

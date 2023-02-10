@@ -16,8 +16,8 @@ std::vector<User> Channel::getUsers() const
 void Channel::setName(std::string name) { this->_name = name; }
 void Channel::setTopic(std::string topic) { this->_topic = topic; }
 
-void Channel::addUser(User user) { this->_users[user.getFd().fd] = user; }
-void Channel::removeUser(User user) { this->_users.erase(this->_users.find(user.getFd().fd)); }
+void Channel::addUser(User user) { this->_users[user.getFd()] = user; }
+void Channel::removeUser(User user) { this->_users.erase(this->_users.find(user.getFd())); }
 void Channel::removeUser(std::string nick)
 {
 	for (std::map<int, User>::iterator it = this->_users.begin(); it != this->_users.end(); it++)

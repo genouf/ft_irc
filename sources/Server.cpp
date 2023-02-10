@@ -139,8 +139,8 @@ void	Server::delete_socket(pollfd pfd)
 
 void	Server::disconnect(User user)
 {
-	this->send_client(":127.0.0.1 ERROR : You have been disconnected.", user.getFd().fd);
-	this->delete_socket(user.getFd());
+	this->send_client(":127.0.0.1 ERROR : You have been disconnected.", user.getPollFd().fd);
+	this->delete_socket(user.getPollFd());
 }
 
 int		Server::new_socket()
@@ -238,7 +238,7 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 
 	if (user.getAut() == false && !this->check_pass(input))
 	{
-		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd().fd);
+		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd());
 		this->disconnect(user);
 		return ;
 	}
@@ -265,7 +265,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	std::string pass;
 	if (params[0].empty())
 	{
-		send(user.getFd().fd, ":127.0.0.1 461 PASS : Not enough parameters\r\n", 41, 0);
+		send(user.getFd(), ":127.0.0.1 461 PASS : Not enough parameters\r\n", 41, 0);
 		return (0);
 	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
@@ -273,15 +273,15 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	if (this->_password != pass)
 	{
 		std::cout << "PASSWORD INCORRECT" << std::endl;
-		send(user.getFd().fd, ":127.0.0.1 464 : Password incorrect\r\n", 37, 0);
-		delete_socket(user.getFd());
+		send(user.getFd(), ":127.0.0.1 464 : Password incorrect\r\n", 37, 0);
+		delete_socket(user.getPollFd());
 		return (0);
 	}
 	else
 	{
 		user.setAut(true);
 		std::cout << "PASSWORD CORRECT" << std::endl;
-		send(user.getFd().fd, ":127.0.0.1 001 : GG vous etes connecte\r\n", 41, 0);
+		send(user.getFd(), ":127.0.0.1 001 : GG vous etes connecte\r\n", 41, 0);
 	}
 	return (1);//question pour le code ERR_ALREADYREGISTERED (462)
 }
@@ -347,7 +347,7 @@ int		Server::cmd_list(std::vector<std::string> params, User &user)
 	this->_channels.insert(std::make_pair(channel2.getName(), channel2));
 	this->_channels.insert(std::make_pair(channel3.getName(), channel3));
 
-	std::cout << "[CMD LIST] send to " << user.getNick() << " on fd " << user.getFd().fd << std::endl;
+	std::cout << "[CMD LIST] send to " << user.getNick() << " on fd " << user.getFd() << std::endl;
 
 	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
 	{
@@ -359,9 +359,9 @@ int		Server::cmd_list(std::vector<std::string> params, User &user)
 		msg.append(it->second.getTopic());
 		msg.append("\r\n");
 		std::cout << msg << std::endl;
-		send(user.getFd().fd, msg.c_str(), msg.length(), 0);
+		send(user.getFd(), msg.c_str(), msg.length(), 0);
 	}
-	send(user.getFd().fd, ":127.0.0.1 323 test :End of channel list\r\n", 60, 0);
+	send(user.getFd(), ":127.0.0.1 323 test :End of channel list\r\n", 60, 0);
 	return (0);
 }
 
@@ -378,7 +378,7 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 	if (params.size() == 0)
 	{
 		msg.append("461 JOIN :Not enough parameters\r\n");
-		send(user.getFd().fd, &msg, sizeof(msg), 0);
+		send(user.getFd(), &msg, sizeof(msg), 0);
 		return (0);
 	}
 	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
@@ -388,7 +388,7 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 			it->second.addUser(user);
 			msg.append("332 " + user.getNick() + " ");
 			msg.append(params[0] + " :" + it->second.getTopic()).append("\r\n");
-			send(user.getFd().fd, &msg, sizeof(msg), 0);
+			send(user.getFd(), &msg, sizeof(msg), 0);
 			std::cout << msg << std::endl;
 
 			std::vector<User> users = it->second.getUsers();
@@ -398,10 +398,10 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 			msg.append("\r\n");
 			std::cout << msg << std::endl;
 
-			send(user.getFd().fd, &msg, sizeof(msg), 0);
+			send(user.getFd(), &msg, sizeof(msg), 0);
 			msg = ":127.0.0.1 366 " + user.getNick() + " " + params[0] + " :End of /NAMES list\r\n";
 			std::cout << msg << std::endl;
-			send(user.getFd().fd, &msg, sizeof(msg), 0);
+			send(user.getFd(), &msg, sizeof(msg), 0);
 			return (0);
 		}
 	}

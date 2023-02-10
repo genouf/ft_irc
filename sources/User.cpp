@@ -24,7 +24,9 @@ std::string	User::getUser() const { return (this->_user); }
 
 int 		User::getAut() const { return (this->_auth); }
 
-pollfd 		User::getFd() const { return (this->_fd); }
+pollfd 		User::getPollFd() const { return (this->_fd); }
+
+int 		User::getFd() const { return (this->_fd.fd); }
 
 
 /*	SETTER	*/

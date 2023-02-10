@@ -1,5 +1,15 @@
 #include "../includes/Server.hpp"
 #include "poll.h"
+#include <csignal>
+
+bool run = true;
+
+void	handler(int sig)
+{
+	(void)sig;
+	run = false;
+	return ;
+}
 
 int main()
 {
@@ -15,7 +25,9 @@ int main()
 	sock.add_channel(channel2);
 
 	std::cout << "SERVER ON" << std::endl;
-	sock.run();
+	signal(SIGINT, handler);
+	while (run)
+		sock.run();
 
 	return (0);
 }

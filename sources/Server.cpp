@@ -65,7 +65,7 @@ int	Server::run()
 		int ret = poll(this->_sockets.data(), this->_sockets.size(), -1);
 		if (ret < 0)
 		{
-			std::perror("Error polling");
+			//std::perror("Error polling");
 			return (1);
 		}
 		for (int i = 0; i < (int)this->_sockets.size(); i++)
@@ -103,9 +103,11 @@ int	Server::run()
 
 void	Server::init_cmd_functions()
 {
+	// Connection
 	this->_cmd_functions["PASS"] = &Server::cmd_password;
 	this->_cmd_functions["NICK"] = &Server::cmd_nick;
 	this->_cmd_functions["USER"] = &Server::cmd_user;
+	this->_cmd_functions["PING"] = &Server::cmd_ping;
 
 	// Channel
 	this->_cmd_functions["LIST"] = &Server::cmd_list;

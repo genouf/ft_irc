@@ -12,7 +12,7 @@ int		Server::is_auth_nick(User &user)
 
 int		Server::cmd_nick(std::vector<std::string> params, User &user)
 {
-	if (params.size() == 0)
+	if (params[0].empty())
 	{
 		this->send_client(":127.0.0.1 431 :No nickname given", user.getFd());
 		return (this->is_auth_nick(user));

@@ -5,7 +5,7 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 	size_t 		i = 0;
 	std::string AllUsers;
 
-	if (params.size() == 0)
+	if (params[0].empty())
 	{
 		this->send_client(":127.0.0.1 461 JOIN :Not enough parameters", user.getFd());
 		return (0);

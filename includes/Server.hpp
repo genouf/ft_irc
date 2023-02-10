@@ -24,7 +24,7 @@ class Channel;
 
 class Server
 {
-	typedef int(Server::*cmd_f)(std::vector<std::string>, User);
+	typedef int(Server::*cmd_f)(std::vector<std::string>, User &);
 	/*	MEMBER VAR	*/
 	private:
 		int								_sockfd;
@@ -44,11 +44,11 @@ class Server
 		std::vector<std::vector<std::string> >	parsing_msg(std::string msg);
 		/*	CMD	*/
 		void	monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd);
-		int		cmd_password(std::vector<std::string> params, User user);
-		int		cmd_list(std::vector<std::string> params, User user);
-		int		cmd_join(std::vector<std::string> params, User user);
-		int		cmd_nick(std::vector<std::string> params, User user);
-		int		cmd_user(std::vector<std::string> params, User user);
+		int		cmd_password(std::vector<std::string> params, User &user);
+		int		cmd_list(std::vector<std::string> params, User &user);
+		int		cmd_join(std::vector<std::string> params, User &user);
+		int		cmd_nick(std::vector<std::string> params, User &user);
+		int		cmd_user(std::vector<std::string> params, User &user);
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/

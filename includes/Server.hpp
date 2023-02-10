@@ -17,8 +17,8 @@
 #include <sstream>
 #include <fcntl.h>
 #include <poll.h>
-#include "User.hpp"
 #include "Channel.hpp"
+#include "User.hpp"
 
 #define MAX_QUEUED 1000
 
@@ -50,15 +50,20 @@ class Server
 		/*	CMD	*/
 		bool	check_pass(std::vector<std::vector<std::string> > input);
 		void	monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd);
+
+		// Connection
 		int		cmd_password(std::vector<std::string> params, User &user);
+		int 	is_auth_nick(User &user);
 		int		cmd_nick(std::vector<std::string> params, User &user);
 		int		cmd_user(std::vector<std::string> params, User &user);
+		int		cmd_ping(std::vector<std::string> params, User &user);
 
 		// Channel
 		int		cmd_list(std::vector<std::string> params, User &user);
 		int		cmd_join(std::vector<std::string> params, User &user);
 		int		cmd_part(std::vector<std::string> params, User &user);
 		int		cmd_topic(std::vector<std::string> params, User &user);
+		int		cmd_names(std::vector<std::string> params, User &user);
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
@@ -70,5 +75,7 @@ class Server
 
 		/*	FUNCTIONS	*/
 		int		run();
+		// TMP
+		void	add_channel(Channel channel);
 };
 

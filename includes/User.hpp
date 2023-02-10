@@ -7,7 +7,7 @@ class User
 {
 	private:
 		/*	PRIVATE STRUCT */
-		struct auth_ok 
+		struct auth_ok
 		{
 			auth_ok()
 			{
@@ -56,7 +56,7 @@ class User
 		/*	SETTER	*/
 		void setNick(std::string input);
 		void setUsername(std::string input);
-		void setRealname(std::string input);		
+		void setRealname(std::string input);
 		void setAut(bool input);
 		void setIp(std::string ip);
 

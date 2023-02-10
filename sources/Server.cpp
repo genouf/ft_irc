@@ -112,6 +112,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["JOIN"] = &Server::cmd_join;
 	this->_cmd_functions["PART"] = &Server::cmd_part;
 	this->_cmd_functions["TOPIC"] = &Server::cmd_topic;
+	this->_cmd_functions["NAMES"] = &Server::cmd_names;
 	return ;
 }
 
@@ -123,6 +124,7 @@ bool operator==(const pollfd &lhs, const pollfd &rhs)
 
 void	Server::send_client(std::string msg, int fd)
 {
+	std::cout << "[SEND] From server to " << fd << ": " << std::endl << msg << std::endl;
 	msg.append("\r\n");
 	send(fd, msg.c_str(), msg.size(), 0);
 	return ;
@@ -142,13 +144,13 @@ void	Server::disconnect(User user)
 {
 	this->send_client(":127.0.0.1 ERROR : You have been disconnected.", user.getPollFd().fd);
 	this->delete_socket(user.getPollFd());
+	this->_nicks.erase(find(this->_nicks.begin(), this->_nicks.end(), user.getNick()));
 }
 
 int		Server::new_socket()
 {
 	int		new_socket = -1;
 
-	std::cout << "Listening socket is readable" << std::endl;
 	do
 	{
 		struct sockaddr_in client_addr;
@@ -166,7 +168,6 @@ int		Server::new_socket()
 		struct pollfd	tmp = {new_socket, POLLIN, 0};
 		this->_sockets.push_back(tmp);
 		this->_users.insert(std::make_pair(new_socket, User(tmp, client_addr)));
-		std::cout << "New connection, socket fd is " << new_socket << std::endl;
 	} while (new_socket != -1);
 	return (0);
 }
@@ -191,7 +192,7 @@ int		Server::new_msg(int &i)
 		return (2);
 	}
 	msg[ret] = '\0';
-	std::cout << "Data received from " << this->_sockets[i].fd << ": " << msg << std::endl;
+	std::cout << "[RECEIVE] From client " << this->_sockets[i].fd << " to server: " << msg << std::endl;
 	std::string msg_s(msg);
 	this->monitor_cmd(this->parsing_msg(msg_s), this->_sockets[i].fd);
 	return (0);
@@ -261,8 +262,11 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 	if (user.getAut() == false && user._auth_ok.authentificated())
 	{
 		user.setAut(true);
-		this->send_client(":127.0.0.1 001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[!" + user.getUsername() + "@" + "127.0.0.1]", user.getFd());
+		this->send_client(":127.0.0.1 001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user.getFd());
 	}
 }
 
-
+void	Server::add_channel(Channel channel)
+{
+		this->_channels.insert(std::make_pair(channel.getName(), channel));
+}

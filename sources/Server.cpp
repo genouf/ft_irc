@@ -236,7 +236,6 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 {
 	User &user = this->_users.find(user_fd)->second;
 
-	std::cout << "USER " << user.getNick() << " IS CONNECTED ? " << user.getAut() << std::endl;
 	if (user.getAut() == false && !this->check_pass(input))
 	{
 		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd());
@@ -255,8 +254,13 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 			tmp_func = tmp_it->second;
 			(*it).erase((*it).begin());
 			if (!(this->*tmp_func)((*it), user))
-				break;
+				return ;
 		}
+	}
+	if (user.getAut() == false && user._auth_ok.authentificated())
+	{
+		user.setAut(true);
+		this->send_client(":127.0.0.1 001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[!" + user.getUser() + "@" + "127.0.0.1]", user.getFd());
 	}
 }
 
@@ -280,9 +284,8 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	}
 	else
 	{
-		user.setAut(true);
 		std::cout << "PASSWORD CORRECT" << std::endl;
-		this->send_client(":127.0.0.1 001 : GG vous etes connecte", user.getFd());
+		user._auth_ok.pass = true;
 	}
 	return (1);//question pour le code ERR_ALREADYREGISTERED (462)
 }
@@ -314,15 +317,11 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 			this->disconnect(user);
 			return (0);
 		}
-
 		std::cout << "GOOD NICK" << std::endl;
+		user._auth_ok.nick = true;
 		user.setNick(params[0]);
 		_nicks.push_back(params[0]); //Rajouter les codes retours
 		return (1);
-	}
-	else
-	{
-		std::cout << "BAD NICK" << std::endl;
 	}
 	return (0);
 }
@@ -333,7 +332,7 @@ int		Server::cmd_user(std::vector<std::string> params, User &user)
 	(void) params;
 	std::string name;
 	std::cout << "JE SUIS DANS LA CMD USER" << std::endl;
-
+	user._auth_ok.user = true;
 
 	// for (std::vector<std::string>::iterator it = params.begin() + 4; it != params.end(); it++)
 	// 	std::cout << *it << std::endl;

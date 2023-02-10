@@ -234,8 +234,9 @@ bool	Server::check_pass(std::vector<std::vector<std::string> > input)
 
 void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_fd)
 {
-	User user = this->_users.find(user_fd)->second;
+	User &user = this->_users.find(user_fd)->second;
 
+	std::cout << "USER " << user.getNick() << " IS CONNECTED ? " << user.getAut() << std::endl;
 	if (user.getAut() == false && !this->check_pass(input))
 	{
 		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd());
@@ -274,7 +275,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	{
 		std::cout << "PASSWORD INCORRECT" << std::endl;
 		this->send_client(":127.0.0.1 464 : Password incorrect", user.getFd());
-		delete_socket(user.getPollFd());
+		this->disconnect(user);
 		return (0);
 	}
 	else
@@ -293,7 +294,7 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 	{
 		std::cout << "BAD NICK" << std::endl;
 		this->send_client(":127.0.0.1 431 :No nickname given", user.getFd());
-		delete_socket(user.getPollFd());
+		this->disconnect(user);
 		return (0);
 	}
 	if (user.getAut() == true)
@@ -303,14 +304,14 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 			std::cout << "BAD NICK" << std::endl;
 			std::string sret = ":127.0.0.1 432 " + params[0] + " :Erroneus nickname\r\n";
 			this->send_client(sret, user.getFd());
-			delete_socket(user.getPollFd());
+			this->disconnect(user);
 			return (0);
 		}
 		if (find(this->_nicks.begin(), this->_nicks.end(), params[0]) != this->_nicks.end())
 		{
 			std::cout << "BAD NICK" << std::endl;
 			this->send_client(":127.0.0.1 433 :Nickname is already in use", user.getFd());
-			delete_socket(user.getPollFd());
+			this->disconnect(user);
 			return (0);
 		}
 

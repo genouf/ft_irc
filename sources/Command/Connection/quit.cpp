@@ -1,10 +1,20 @@
 #include "../../../includes/Server.hpp"
+#include <numeric>
 
 int		Server::cmd_quit(std::vector<std::string> params, User &user)
 {
-	(void)params;
-	(void)user;
-	// Close the connection with the client.
-	// Send a message quit to all the user who share the same channel with the reason provide by the client.
-	return (1);
+	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+	{
+		if (it->second.isUserInChannel(user))
+		{
+			for (std::map<int, User*>::iterator it_user = it->second.getUsers().begin(); it_user != it->second.getUsers().end(); it_user++)
+			{
+				if (it_user->second->getFd() != user.getFd())
+					this->send_client("QUIT " + std::accumulate(params.begin(), params.end(), std::string("")), it_user->second->getFd());
+			}
+			break;
+		}
+	}
+	this->disconnect(user);
+	return (0);
 }

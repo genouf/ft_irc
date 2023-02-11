@@ -117,6 +117,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["PART"] = &Server::cmd_part;
 	this->_cmd_functions["TOPIC"] = &Server::cmd_topic;
 	this->_cmd_functions["NAMES"] = &Server::cmd_names;
+	this->_cmd_functions["PRIVMSG"] = &Server::cmd_privmsg;
 	return ;
 }
 
@@ -290,4 +291,23 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 void	Server::add_channel(Channel channel)
 {
 		this->_channels.insert(std::make_pair(channel.getName(), channel));
+}
+
+bool	Server::isUser(std::string const &nick)
+{
+	for (std::map<int, User>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		if (it->second.getNick() == nick)
+			return (true);
+	}
+	return (false);
+}
+
+bool	Server::isChannel(std::string channel)
+{
+	if (channel[0] != '#')
+		channel.insert(0, "#");
+	if (this->_channels.find(channel) != this->_channels.end())
+		return (true);
+	return (false);
 }

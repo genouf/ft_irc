@@ -48,6 +48,8 @@ class Server
 		int										new_msg(int &i);
 		std::vector<std::vector<std::string> >	parsing_msg(std::string msg);
 		std::vector<std::string> params_channel(std::string params);
+		bool									isUser(std::string const &nick);
+		bool									isChannel(std::string channel);
 
 		/*	CMD	*/
 		bool	check_pass(std::vector<std::vector<std::string> > input);
@@ -67,6 +69,7 @@ class Server
 		int		cmd_part(std::vector<std::string> params, User &user);
 		int		cmd_topic(std::vector<std::string> params, User &user);
 		int		cmd_names(std::vector<std::string> params, User &user);
+		int		cmd_privmsg(std::vector<std::string> params, User &user);
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/

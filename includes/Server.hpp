@@ -42,6 +42,7 @@ class Server
 		void									init_cmd_functions();
 		/*	UTILS	*/
 		void									send_client(std::string msg, User user);
+		void									send_client(std::string msg, User user_from, User user_to);
 		void									delete_socket(pollfd fd);
 		void									disconnect(User user);
 		int										new_socket();

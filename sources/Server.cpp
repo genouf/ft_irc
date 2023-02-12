@@ -149,7 +149,8 @@ void	Server::disconnect(User user)
 {
 	this->send_client(":127.0.0.1 ERROR : You have been disconnected.", user.getPollFd().fd);
 	this->delete_socket(user.getPollFd());
-	this->_nicks.erase(find(this->_nicks.begin(), this->_nicks.end(), user.getNick()));
+	if (user._auth_ok.nick == true)
+		this->_nicks.erase(find(this->_nicks.begin(), this->_nicks.end(), user.getNick()));
 }
 
 int		Server::new_socket()

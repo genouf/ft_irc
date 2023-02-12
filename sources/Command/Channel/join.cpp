@@ -27,6 +27,7 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 
 			msg = ":127.0.0.1 353 " + user.getNick() + " = " + params[0] + " :";
 			msg.append(user.getNick() + " " + AllUsers);
+			// msg.append(AllUsers);
 			this->send_client(msg, user.getFd());
 
 			msg = ":127.0.0.1 366 " + user.getNick() + " " + params[0] + " :End of NAMES list";

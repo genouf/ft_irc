@@ -21,6 +21,7 @@ int		Server::cmd_quit(std::vector<std::string> params, User &user)
 			it->second.getUsers().erase(user.getFd());
 		}
 	}
+	//TO DO the server then informs the rest of the network of the new operator by issuing a "MODE +o" for the clients nickname.
 	this->disconnect(user);
 	return (0);
 }

@@ -37,6 +37,7 @@ class User
 		pollfd				_fd;
 		std::string			_ip;
 		std::string			_hostname;
+		bool				_op;
 
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
@@ -59,6 +60,7 @@ class User
 		void setRealname(std::string input);
 		void setAut(bool input);
 		void setIp(std::string ip);
+		void setOp(bool input);
 
 		auth_ok				_auth_ok;
 };

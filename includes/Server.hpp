@@ -62,6 +62,7 @@ class Server
 		int		cmd_user(std::vector<std::string> params, User &user);
 		int		cmd_ping(std::vector<std::string> params, User &user);
 		int		cmd_quit(std::vector<std::string> params, User &user);
+		int		cmd_oper(std::vector<std::string> params, User &user);
 
 		// Channel
 		int		cmd_list(std::vector<std::string> params, User &user);

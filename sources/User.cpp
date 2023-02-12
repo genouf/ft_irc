@@ -1,9 +1,9 @@
 #include "../includes/User.hpp"
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
-User::User() : _nick(""), _username(""), _auth(false) { return ; }
+User::User() : _nick(""), _username(""), _auth(false), _op(false) { return ; }
 
-User::User(pollfd fd, struct sockaddr_in addr) : _nick("test"), _username(""), _auth(false), _fd(fd)
+User::User(pollfd fd, struct sockaddr_in addr) : _nick("test"), _username(""), _auth(false), _fd(fd), _op(false)
 {
 	_ip = inet_ntoa(addr.sin_addr);
 	char hostname[1024];
@@ -43,3 +43,5 @@ void User::setRealname(std::string input) { this->_realname = input; }
 void User::setAut(bool input) { this->_auth = input; }
 
 void User::setIp(std::string input) { this->_ip = input; }
+
+void User::setOp(bool input) { this->_op = input; }

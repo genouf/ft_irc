@@ -21,7 +21,7 @@ int		Server::cmd_privmsg(std::vector<std::string> params, User &user)
 				{
 					if (it2->second->getFd() != user.getFd())
 					{
-						this->send_client(":" + user.getNick() + " PRIVMSG " + params[0] + " :" + msg, (*it2->second));
+						this->send_client(" PRIVMSG " + params[0] + " :" + msg, (*it2->second));
 					}
 				}
 			}
@@ -33,7 +33,7 @@ int		Server::cmd_privmsg(std::vector<std::string> params, User &user)
 		{
 			if (it->second.getNick() == params[0])
 			{
-				this->send_client(":" + user.getNick() + " PRIVMSG " + params[0] + " :" + msg, it->second);
+				this->send_client(" PRIVMSG " + params[0] + " :" + msg, it->second);
 			}
 		}
 	}

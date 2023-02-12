@@ -13,7 +13,7 @@ Server::Server(int port, std::string password)
 		std::perror("Error creating socket");
 		exit(1);
 	}
-	if (setsockopt(this->_sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof(on)))
+	if (setsockopt(this->_sockfd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, (char *)&on, sizeof(on)))
 	{
 		std::perror("Setsockopt failed");
 		close(this->_sockfd);

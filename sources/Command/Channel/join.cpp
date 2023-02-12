@@ -15,19 +15,20 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 		if (it->first == params[0])
 		{
 			std::cout << "User added to channel " << params[0] << std::endl;
-			it->second.addUser(&user);
 			std::map<int, User*> users = it->second.getUsers();
 			for (std::map<int, User*>::iterator it = users.begin(); it != users.end(); it++)
 			{
 				AllUsers.append(it->second->getNick() + " ");
 				this->send_client(":" + user.getNick() + " JOIN " + params[0], it->second->getFd());
 			}
-			std::string msg = ":127.0.0.1 332 " + user.getNick() + " " + params[0] + " :" + it->second.getTopic();
-			this->send_client(msg, user.getFd());
-
-			msg = ":127.0.0.1 353 " + user.getNick() + " = " + params[0] + " :";
+			if (!it->second.getTopic().empty())
+			{
+				std::string msg = ":127.0.0.1 332 " + user.getNick() + " " + params[0] + " :" + it->second.getTopic();
+				this->send_client(msg, user.getFd());
+			}
+			std::string msg = ":127.0.0.1 353 " + user.getNick() + " = " + params[0] + " :";
 			msg.append(user.getNick() + " " + AllUsers);
-			// msg.append(AllUsers);
+			it->second.addUser(&user);
 			this->send_client(msg, user.getFd());
 
 			msg = ":127.0.0.1 366 " + user.getNick() + " " + params[0] + " :End of NAMES list";

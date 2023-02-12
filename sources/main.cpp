@@ -17,7 +17,7 @@ int main()
 
 	Channel channel;
 	channel.setName("#channel");
-	channel.setTopic("Topic");
+	// channel.setTopic("Topic");
 	Channel channel2;
 	channel2.setName("#channel2");
 	channel2.setTopic("Topic2");

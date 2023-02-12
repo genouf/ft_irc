@@ -40,6 +40,9 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 		}
 	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
-		this->send_info_join(this->_channels.find(*it)->second, params[0], user);
+	{
+		std::cout << "Channel " << *it << std::endl;
+		this->send_info_join(this->_channels.find(*it)->second, *it, user);
+	}
 	return (0);
 }

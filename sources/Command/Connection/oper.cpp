@@ -14,5 +14,6 @@ int		Server::cmd_oper(std::vector<std::string> params, User &user)
 	}
 	user.setOp(true);
 	this->send_client(":127.0.0.1 381 :You are now an IRC operator", user.getFd());
+	//TO DO the server then informs the rest of the network of the new operator by issuing a "MODE +o" for the clients nickname.
 	return(1);
 }

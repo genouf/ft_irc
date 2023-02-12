@@ -15,6 +15,7 @@ class Channel
 
 	public:
 		Channel();
+		Channel(std::string name);
 		virtual ~Channel();
 
 		/*	GETTER	*/
@@ -34,4 +35,6 @@ class Channel
 		void				removeUser(std::string nick);
 		/*	INFO	*/
 		bool				isUserInChannel(User user);
+		int					getNbUsers();
+		std::string 		getNbUsers_string();
 };

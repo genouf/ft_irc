@@ -261,12 +261,6 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 {
 	User &user = this->_users.find(user_fd)->second;
 
-	if (user.getAut() == false && !this->check_pass(input))
-	{
-		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd());
-		this->disconnect(user);
-		return ;
-	}
 	for (std::vector<std::vector<std::string> >::iterator it = input.begin(); it != input.end(); it++)
 	{
 		std::string									tmp((*it)[0]);

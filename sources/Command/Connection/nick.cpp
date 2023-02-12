@@ -12,6 +12,12 @@ int		Server::is_auth_nick(User &user)
 
 int		Server::cmd_nick(std::vector<std::string> params, User &user)
 {
+	if (user._auth_ok.pass == false)
+	{
+		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd());
+		this->disconnect(user);
+		return (0);
+	}
 	if (params[0].empty())
 	{
 		this->send_client(":127.0.0.1 431 :No nickname given", user.getFd());

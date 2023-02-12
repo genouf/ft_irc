@@ -66,6 +66,7 @@ class Server
 
 		// Channel
 		int		cmd_list(std::vector<std::string> params, User &user);
+		void	send_info_join(Channel &channel, std::string title, User &user);
 		int		cmd_join(std::vector<std::string> params, User &user);
 		int		cmd_part(std::vector<std::string> params, User &user);
 		int		cmd_topic(std::vector<std::string> params, User &user);

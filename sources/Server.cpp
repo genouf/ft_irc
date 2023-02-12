@@ -130,7 +130,7 @@ bool operator==(const pollfd &lhs, const pollfd &rhs)
 void	Server::send_client(std::string msg, User user)
 {
 	std::string from;
-	
+
 	if (user.getAut() == true)
 		from = ":" + user.getNick() + "!" + user.getUsername() + "@" + user.getIp();
 	else
@@ -139,6 +139,21 @@ void	Server::send_client(std::string msg, User user)
 	std::cout << "[SEND] From server to " << user.getFd() << ": " << std::endl << from << std::endl;
 	from.append("\r\n");
 	send(user.getFd(), from.c_str(), from.size(), 0);
+	return ;
+}
+
+void	Server::send_client(std::string msg, User user_from, User user_to)
+{
+	std::string from;
+
+	if (user_from.getAut() == true)
+		from = ":" + user_from.getNick() + "!" + user_from.getUsername() + "@" + user_from.getIp();
+	else
+		from = ":localhost";
+	from += " " + msg;
+	std::cout << "[SEND] From server to " << user_to.getFd() << ": " << std::endl << from << std::endl;
+	from.append("\r\n");
+	send(user_to.getFd(), from.c_str(), from.size(), 0);
 	return ;
 }
 

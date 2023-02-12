@@ -3,6 +3,8 @@
 
 int	Server::cmd_part(std::vector<std::string> params, User &user)
 {
+	bool	found_channel = false;
+
 	if (params[0].empty())
 	{
 		send_client("461 PART :Not enough parameters", user.getFd());
@@ -13,6 +15,7 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 	{
 		if (it->first == params[i])
 		{
+			found_channel = true;
 			if (it->second.isUserInChannel(user))
 			{
 				for (std::map<int, User*>::iterator it2 = it->second.getUsers().begin(); it2 != it->second.getUsers().end(); it2++)
@@ -29,8 +32,8 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 				return (0);
 			i++;
 		}
-		else
-			send_client(":127.0.0.1 403 " + params[i] + " :No such channel", user.getFd());
 	}
+	if (found_channel == false)
+		send_client(":127.0.0.1 403 " + params[i] + " :No such channel", user.getFd());
 	return (0);
 }

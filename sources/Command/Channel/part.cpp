@@ -5,7 +5,7 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 {
 	if (params[0].empty())
 	{
-		send_client("461 PART :Not enough parameters", user.getFd());
+		send_client("461 PART :Not enough parameters", user);
 		return (0);
 	}
 	size_t i = 0;
@@ -16,7 +16,7 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 			if (it->second.isUserInChannel(user))
 			{
 				for (std::map<int, User*>::iterator it2 = it->second.getUsers().begin(); it2 != it->second.getUsers().end(); it2++)
-					send_client(":" + it2->second->getNick() + "!" + it2->second->getUsername() + "@127.0.0.1" + " PART " + params[i], it2->second->getFd());
+					send_client("PART " + params[i], (*it2->second));
 				it->second.removeUser(user);
 				if (it->second.getUsers().size() == 0)
 					this->_channels.erase(it);
@@ -24,7 +24,7 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 			}
 			else
 			{
-				send_client(":127.0.0.1 442 " + params[i] + " :You're not on that channel", user.getFd());
+				send_client("442 " + params[i] + " :You're not on that channel", user);
 				return (0);
 			}
 			if (i == params.size() - 1)

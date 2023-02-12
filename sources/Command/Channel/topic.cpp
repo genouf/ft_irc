@@ -4,7 +4,7 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 {
 	if (params[0].empty())
 	{
-		this->send_client("127.0.0.1 461 " + user.getNick() + " TOPIC :Not enough parameters\r\n", user.getFd());
+		this->send_client("461 " + user.getNick() + " TOPIC :Not enough parameters\r\n", user);
 		return (0);
 	}
 	else
@@ -16,11 +16,11 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 			{
 				if (it->first == params[0])
 				{
-					this->send_client(":127.0.0.1 332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user.getFd());
+					this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
 					return (0);
 				}
 			}
-			this->send_client(":127.0.0.1 403 " + params[0] + " :No such channel", user.getFd());
+			this->send_client("403 " + params[0] + " :No such channel", user);
 			return (0);
 		}
 		else
@@ -32,11 +32,11 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 					if (it->first == params[0])
 					{
 						it->second.setTopic("");
-						this->send_client(":127.0.0.1 332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user.getFd());
+						this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
 						return (0);
 					}
 				}
-				this->send_client(":127.0.0.1 403 " + params[0] + " :No such channel", user.getFd());
+				this->send_client("403 " + params[0] + " :No such channel", user);
 				return (0);
 			}
 			else
@@ -52,11 +52,11 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 								newTopic += *it2 + " ";
 						}
 						it->second.setTopic(newTopic);
-						this->send_client(":127.0.0.1 332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user.getFd());
+						this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
 						return (0);
 					}
 				}
-				this->send_client(":127.0.0.1 403 " + params[0] + " :No such channel", user.getFd());
+				this->send_client("403 " + params[0] + " :No such channel", user);
 				return (0);
 			}
 		}

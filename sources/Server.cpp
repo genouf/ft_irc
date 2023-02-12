@@ -127,11 +127,18 @@ bool operator==(const pollfd &lhs, const pollfd &rhs)
     return lhs.fd == rhs.fd;
 }
 
-void	Server::send_client(std::string msg, int fd)
+void	Server::send_client(std::string msg, User user)
 {
-	std::cout << "[SEND] From server to " << fd << ": " << std::endl << msg << std::endl;
-	msg.append("\r\n");
-	send(fd, msg.c_str(), msg.size(), 0);
+	std::string from;
+	
+	if (user.getAut() == true)
+		from = ":" + user.getNick() + "!" + user.getUsername() + "@" + user.getIp();
+	else
+		from = ":localhost";
+	from += " " + msg;
+	std::cout << "[SEND] From server to " << user.getFd() << ": " << std::endl << from << std::endl;
+	from.append("\r\n");
+	send(user.getFd(), from.c_str(), from.size(), 0);
 	return ;
 }
 
@@ -147,7 +154,7 @@ void	Server::delete_socket(pollfd pfd)
 
 void	Server::disconnect(User user)
 {
-	this->send_client(":127.0.0.1 ERROR : You have been disconnected.", user.getPollFd().fd);
+	this->send_client("ERROR : You have been disconnected.", user);
 	this->delete_socket(user.getPollFd());
 	if (user._auth_ok.nick == true)
 		this->_nicks.erase(find(this->_nicks.begin(), this->_nicks.end(), user.getNick()));
@@ -279,7 +286,7 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 	if (user.getAut() == false && user._auth_ok.authentificated())
 	{
 		user.setAut(true);
-		this->send_client(":127.0.0.1 001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user.getFd());
+		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
 	}
 }
 

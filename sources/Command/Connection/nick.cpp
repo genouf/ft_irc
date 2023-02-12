@@ -14,26 +14,26 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 {
 	if (user._auth_ok.pass == false)
 	{
-		this->send_client(":127.0.0.1 ERROR : No password supplied.", user.getFd());
+		this->send_client("ERROR : No password supplied.", user);
 		this->disconnect(user);
 		return (0);
 	}
 	if (params[0].empty())
 	{
-		this->send_client(":127.0.0.1 431 :No nickname given", user.getFd());
+		this->send_client("431 :No nickname given", user);
 		return (this->is_auth_nick(user));
 	}
 	if (params.size() > 1 || params[0].find_first_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-", 0) != std::string::npos)
 	{
-		std::string sret = ":127.0.0.1 432 " + params[0] + " :Erroneus nickname\r\n";
-		this->send_client(sret, user.getFd());
+		std::string sret = "432 " + params[0] + " :Erroneus nickname\r\n";
+		this->send_client(sret, user);
 		return (this->is_auth_nick(user));
 	}
 	std::vector<std::string>::iterator nick_found = find(this->_nicks.begin(), this->_nicks.end(), params[0]);
 	if (nick_found != this->_nicks.end())
 	{
-		std::string sret = ":127.0.0.1 433 " + params[0] + " :Nickname is already in use\r\n";
-		this->send_client(sret, user.getFd());
+		std::string sret = "433 " + params[0] + " :Nickname is already in use\r\n";
+		this->send_client(sret, user);
 		return (this->is_auth_nick(user));
 	}
 	user._auth_ok.nick = true;

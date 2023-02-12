@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include "Server.hpp"
-#include "poll.h"
 
 class User
 {

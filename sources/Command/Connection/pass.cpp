@@ -5,7 +5,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 	std::string pass;
 	if (params[0].empty())
 	{
-		this->send_client(":127.0.0.1 461 PASS : Not enough parameters", user.getFd());
+		this->send_client("461 PASS : Not enough parameters", user);
 		this->disconnect(user);
 		return (0);
 	}
@@ -13,7 +13,7 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 		pass = pass + *it;
 	if (this->_password != pass)
 	{
-		this->send_client(":127.0.0.1 464 : Password incorrect", user.getFd());
+		this->send_client("464 : Password incorrect", user);
 		this->disconnect(user);
 		return (0);
 	}

@@ -330,6 +330,8 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		if (tmp_it != this->_cmd_functions.end())
 		{
 			tmp_func = tmp_it->second;
+			if (user.getAut() == false && (*((*it).begin()) != "PASS" && *((*it).begin()) != "NICK" && *((*it).begin()) != "USER"))
+				return ;
 			(*it).erase((*it).begin());
 			if (!(this->*tmp_func)((*it), user))
 				return ;
@@ -340,6 +342,8 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		user.setAut(true);
 		user.ping_info.token = user.getNick();
 		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
+		std::vector<std::string> params;
+		this->cmd_motd(params, user);
 		// this->send_ping(user);
 	}
 }

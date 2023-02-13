@@ -19,9 +19,5 @@ int		Server::cmd_kill(std::vector<std::string> params, User &user)
 		this->send_client(sret, user);
 		return (0);
 	}
-	user.setOp(true);
-	this->send_client("381 :You are now an IRC operator", user);
-	std::string sret = "221 " + params[0] + " :+o\r\n";
-	this->send_client(sret, user);
 	return(1);
 }

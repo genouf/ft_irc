@@ -75,6 +75,8 @@ class Server
 		int		cmd_privmsg(std::vector<std::string> params, User &user);
 
 		int		cmd_who(std::vector<std::string> params, User &user);
+		int		cmd_motd(std::vector<std::string> params, User &user);
+		int		cmd_notice(std::vector<std::string> params, User &user);
 
 		//Operator
 		int		cmd_kill(std::vector<std::string> params, User &user);

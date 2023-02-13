@@ -121,6 +121,8 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["PRIVMSG"] = &Server::cmd_privmsg;
 
 	this->_cmd_functions["WHO"] = &Server::cmd_who;
+	this->_cmd_functions["motd"] = &Server::cmd_motd;
+	this->_cmd_functions["NOTICE"] = &Server::cmd_notice;
 
 	//Operator
 	this->_cmd_functions["KILL"] = &Server::cmd_kill;

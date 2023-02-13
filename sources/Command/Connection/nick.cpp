@@ -12,16 +12,16 @@ int		Server::is_auth_nick(User &user)
 
 int		Server::cmd_nick(std::vector<std::string> params, User &user)
 {
+	if (params.size() == 0 || params[0].empty())
+	{
+		this->send_client("431 :No nickname given", user);
+		return (this->is_auth_nick(user));
+	}
 	if (user.auth_ok.pass == false)
 	{
 		this->send_client("ERROR : No password supplied.", user);
 		this->disconnect(user);
 		return (0);
-	}
-	if (params.size() == 0 || params[0].empty())
-	{
-		this->send_client("431 :No nickname given", user);
-		return (this->is_auth_nick(user));
 	}
 	if (params.size() > 1 || params[0].find_first_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-", 0) != std::string::npos)
 	{

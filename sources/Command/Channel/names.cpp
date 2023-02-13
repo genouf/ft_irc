@@ -2,7 +2,7 @@
 
 int		Server::cmd_names(std::vector<std::string> params, User &user)
 {
-	if (params[0].empty())
+	if (params.size() == 0 || params[0].empty())
 	{
 		for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
 		{

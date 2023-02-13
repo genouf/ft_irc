@@ -2,15 +2,15 @@
 
 int		Server::cmd_user(std::vector<std::string> params, User &user)
 {
-	if (user.getAut())
-	{
-		this->send_client("462 :You may not reregister", user);
-		return (0);
-	}
 	if (params.size() < 4)
 	{
 		this->send_client("461 USER :Not enough parameters", user);
 		this->disconnect(user);
+		return (0);
+	}
+	if (user.getAut())
+	{
+		this->send_client("462 :You may not reregister", user);
 		return (0);
 	}
 	std::string name;

@@ -70,6 +70,7 @@ class User
 		pollfd		getPollFd() const;
 		int 		getFd() const;
 		std::string	getIp() const;
+		bool		getOp() const;
 
 		/*	SETTER	*/
 		void setNick(std::string input);

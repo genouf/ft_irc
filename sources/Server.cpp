@@ -109,6 +109,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["PING"] = &Server::cmd_ping;
 	this->_cmd_functions["PONG"] = &Server::cmd_pong;
 	this->_cmd_functions["QUIT"] = &Server::cmd_quit;
+	this->_cmd_functions["OPER"] = &Server::cmd_oper;
 
 	// Channel
 	this->_cmd_functions["LIST"] = &Server::cmd_list;
@@ -117,6 +118,11 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["TOPIC"] = &Server::cmd_topic;
 	this->_cmd_functions["NAMES"] = &Server::cmd_names;
 	this->_cmd_functions["PRIVMSG"] = &Server::cmd_privmsg;
+
+	this->_cmd_functions["WHO"] = &Server::cmd_who;
+
+	//Operator
+	this->_cmd_functions["KILL"] = &Server::cmd_kill;
 	return ;
 }
 
@@ -332,4 +338,12 @@ bool	Server::isChannel(std::string channel)
 	return (false);
 }
 
-
+int	Server::get_user_fd(std::string nick)
+{
+	for (std::map<int, User>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		if (it->second.getNick() == nick)
+			return (it->first);
+	}
+	return (-1);
+}

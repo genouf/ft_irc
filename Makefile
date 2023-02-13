@@ -1,6 +1,7 @@
 FILES:=	main Server User Channel \
 			Command/Connection/pass Command/Connection/user Command/Connection/nick Command/Connection/ping Command/Connection/quit Command/Connection/oper\
-			Command/Channel/join Command/Channel/list Command/Channel/part Command/Channel/topic Command/Channel/names Command/Channel/privmsg
+			Command/Channel/join Command/Channel/list Command/Channel/part Command/Channel/topic Command/Channel/names Command/Channel/privmsg\
+			Command/operator/kill
 NAME:= ircserv
 
 # ------------------

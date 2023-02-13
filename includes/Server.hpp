@@ -70,6 +70,9 @@ class Server
 		int		cmd_names(std::vector<std::string> params, User &user);
 		int		cmd_privmsg(std::vector<std::string> params, User &user);
 
+		//Operator
+		int		cmd_kill(std::vector<std::string> params, User &user);
+
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
 		Server(int port, std::string password);

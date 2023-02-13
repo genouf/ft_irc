@@ -117,6 +117,9 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["TOPIC"] = &Server::cmd_topic;
 	this->_cmd_functions["NAMES"] = &Server::cmd_names;
 	this->_cmd_functions["PRIVMSG"] = &Server::cmd_privmsg;
+
+	//Operator
+	this->_cmd_functions["KILL"] = &Server::cmd_kill;
 	return ;
 }
 

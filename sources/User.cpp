@@ -32,6 +32,8 @@ int 		User::getFd() const { return (this->_fd.fd); }
 
 std::string User::getIp() const { return (this->_ip); }
 
+bool		User::getOp() const { return (this->_op); }
+
 
 /*	SETTER	*/
 void User::setNick(std::string input) { this->_nick = input; }

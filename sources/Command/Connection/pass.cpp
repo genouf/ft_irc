@@ -18,6 +18,6 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 		return (0);
 	}
 	else
-		user._auth_ok.pass = true;
+		user.auth_ok.pass = true;
 	return (1);//question pour le code ERR_ALREADYREGISTERED (462)
 }

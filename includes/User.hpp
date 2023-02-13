@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <poll.h>
+#include <ctime>
 
 class User
 {
@@ -29,6 +30,20 @@ class User
 			bool	pass;
 			bool	nick;
 			bool	user;
+		};
+
+		struct pinged
+		{
+			pinged()
+			{
+				this->last_ping = clock();
+				this->responded = true;
+			}
+			~pinged() {}
+
+			clock_t 	last_ping;
+			bool		responded;
+			std::string	token;
 		};
 
 		/*	PRIVATE MEMBER VAR	*/
@@ -64,5 +79,6 @@ class User
 		void setIp(std::string ip);
 		void setOp(bool input);
 
-		auth_ok				_auth_ok;
+		auth_ok				auth_ok;
+		pinged				ping_info;
 };

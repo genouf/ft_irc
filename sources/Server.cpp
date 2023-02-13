@@ -60,8 +60,8 @@ int Server::getSocket() const { return(this->_sockfd); }
 /*	FUNCTIONS	*/
 int	Server::run()
 {
-
 	int ret = poll(this->_sockets.data(), this->_sockets.size(), -1);
+	// this->monitor_ping();
 	if (ret < 0)
 	{
 		//std::perror("Error polling");
@@ -73,8 +73,8 @@ int	Server::run()
 			continue;
 		if (this->_sockets[i].revents != POLLIN)
 		{
-			std::perror("Error about revents");
-			this->delete_socket(this->_sockets[i]);
+			// std::perror("Error about revents");
+			// this->delete_socket(this->_sockets[i]);
 			return (1);
 		}
 		if (this->_sockets[i].fd == this->_sockfd)
@@ -107,6 +107,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["NICK"] = &Server::cmd_nick;
 	this->_cmd_functions["USER"] = &Server::cmd_user;
 	this->_cmd_functions["PING"] = &Server::cmd_ping;
+	this->_cmd_functions["PONG"] = &Server::cmd_pong;
 	this->_cmd_functions["QUIT"] = &Server::cmd_quit;
 
 	// Channel
@@ -169,7 +170,7 @@ void	Server::disconnect(User user)
 {
 	this->send_client("ERROR : You have been disconnected.", user);
 	this->delete_socket(user.getPollFd());
-	if (user._auth_ok.nick == true)
+	if (user.auth_ok.nick == true)
 		this->_nicks.erase(find(this->_nicks.begin(), this->_nicks.end(), user.getNick()));
 }
 
@@ -213,7 +214,9 @@ int		Server::new_msg(int &i)
 	}
 	if (ret == 0)
 	{
-		delete_socket(this->_sockets[i]);
+		std::vector<std::string> tmp;
+		tmp.push_back(":User timed out");
+		this->cmd_quit(tmp, this->_users.find(this->_sockets[i].fd)->second);
 		i--;
 		return (2);
 	}
@@ -296,10 +299,12 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 				return ;
 		}
 	}
-	if (user.getAut() == false && user._auth_ok.authentificated())
+	if (user.getAut() == false && user.auth_ok.authentificated())
 	{
 		user.setAut(true);
+		user.ping_info.token = user.getNick();
 		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
+		// this->send_ping(user);
 	}
 }
 
@@ -326,3 +331,5 @@ bool	Server::isChannel(std::string channel)
 		return (true);
 	return (false);
 }
+
+

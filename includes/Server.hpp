@@ -47,6 +47,7 @@ class Server
 		std::vector<std::string> params_channel(std::string params);
 		bool									isUser(std::string const &nick);
 		bool									isChannel(std::string channel);
+		int										get_user_fd(std::string nick);
 
 		/*	CMD	*/
 		bool	check_pass(std::vector<std::vector<std::string> > input);
@@ -69,6 +70,8 @@ class Server
 		int		cmd_topic(std::vector<std::string> params, User &user);
 		int		cmd_names(std::vector<std::string> params, User &user);
 		int		cmd_privmsg(std::vector<std::string> params, User &user);
+
+		int		cmd_who(std::vector<std::string> params, User &user);
 
 		//Operator
 		int		cmd_kill(std::vector<std::string> params, User &user);

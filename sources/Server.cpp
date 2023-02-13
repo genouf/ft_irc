@@ -251,6 +251,11 @@ int		Server::new_msg(int &i)
 		user.get_input().append(msg_s);
 	if (user.get_input().find('\n') != std::string::npos)
 	{
+		std::size_t pos = user.get_input().find("  ");
+		while (pos != std::string::npos) {
+			user.get_input().replace(pos, 2, " ");
+			pos = user.get_input().find("  ");
+		}
 		std::cout << "JE VAIS SEND : " <<  user.get_input() << std::endl;
 		this->monitor_cmd(this->parsing_msg(user.get_input()), this->_sockets[i].fd);
 		user.get_input().clear();

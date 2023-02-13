@@ -12,7 +12,7 @@ int		Server::is_auth_nick(User &user)
 
 int		Server::cmd_nick(std::vector<std::string> params, User &user)
 {
-	if (user._auth_ok.pass == false)
+	if (user.auth_ok.pass == false)
 	{
 		this->send_client("ERROR : No password supplied.", user);
 		this->disconnect(user);
@@ -36,7 +36,7 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 		this->send_client(sret, user);
 		return (this->is_auth_nick(user));
 	}
-	user._auth_ok.nick = true;
+	user.auth_ok.nick = true;
 	user.setNick(params[0]);
 	if (nick_found != this->_nicks.end())
 		this->_nicks.erase(nick_found);

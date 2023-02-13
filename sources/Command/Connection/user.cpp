@@ -32,6 +32,6 @@ int		Server::cmd_user(std::vector<std::string> params, User &user)
 	}
 	user.setRealname(name);
 	user.setUsername(params.back());
-	user._auth_ok.user = true;
+	user.auth_ok.user = true;
 	return (1);
 }

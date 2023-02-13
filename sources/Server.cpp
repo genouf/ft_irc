@@ -108,6 +108,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["USER"] = &Server::cmd_user;
 	this->_cmd_functions["PING"] = &Server::cmd_ping;
 	this->_cmd_functions["QUIT"] = &Server::cmd_quit;
+	this->_cmd_functions["OPER"] = &Server::cmd_oper;
 
 	// Channel
 	this->_cmd_functions["LIST"] = &Server::cmd_list;

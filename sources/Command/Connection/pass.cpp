@@ -3,7 +3,7 @@
 int		Server::cmd_password(std::vector<std::string> params, User &user)
 {
 	std::string pass;
-	if (params[0].empty())
+	if (params.size() == 0 || params[0].empty())
 	{
 		this->send_client("461 PASS : Not enough parameters", user);
 		this->disconnect(user);

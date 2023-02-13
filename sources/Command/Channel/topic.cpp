@@ -2,7 +2,7 @@
 
 int Server::cmd_topic(std::vector<std::string> params, User &user)
 {
-	if (params[0].empty())
+	if (params.size() == 0 || params[0].empty())
 	{
 		this->send_client("461 " + user.getNick() + " TOPIC :Not enough parameters\r\n", user);
 		return (0);

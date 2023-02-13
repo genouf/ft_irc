@@ -2,7 +2,7 @@
 
 int	Server::cmd_part(std::vector<std::string> params, User &user)
 {
-	if (params[0].empty())
+	if (params.size() == 0 || params[0].empty())
 	{
 		send_client("461 PART :Not enough parameters", user);
 		return (0);

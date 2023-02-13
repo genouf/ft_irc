@@ -25,7 +25,7 @@ void	Server::send_info_join(Channel &channel, std::string title, User &user)
 
 int		Server::cmd_join(std::vector<std::string> params, User &user)
 {
-	if (params[0].empty())
+	if (params.size() == 0 || params[0].empty())
 	{
 		this->send_client("461 JOIN :Not enough parameters", user);
 		return (0);

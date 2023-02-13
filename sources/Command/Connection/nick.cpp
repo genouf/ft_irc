@@ -18,7 +18,7 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 		this->disconnect(user);
 		return (0);
 	}
-	if (params[0].empty())
+	if (params.size() == 0 || params[0].empty())
 	{
 		this->send_client("431 :No nickname given", user);
 		return (this->is_auth_nick(user));

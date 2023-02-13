@@ -2,6 +2,11 @@
 
 int		Server::cmd_privmsg(std::vector<std::string> params, User &user)
 {
+	if (params.size() == 0 || params[0].empty())
+	{
+		this->send_client("411 " + user.getNick() + " :No recipient given (PRIVMSG)", user);
+		return (0);
+	}
 	std::string msg;
 	for (std::vector<std::string>::iterator it = params.begin() + 1; it != params.end(); it++)
 	{

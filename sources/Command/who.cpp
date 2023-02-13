@@ -2,6 +2,8 @@
 
 int	Server::cmd_who(std::vector<std::string> params, User &user)
 {
+	if (params.size() == 0 || params[0].empty())
+		this->send_client("402 " + user.getNick() + " " + params[0] + " :No such server", user);
 	if (this->isChannel(params[0]))
 	{
 		Channel &channel = this->_channels.find(params[0])->second;

@@ -1,6 +1,9 @@
 #pragma once
+#include <arpa/inet.h>
+#include <netdb.h>
 #include <iostream>
-#include "Server.hpp"
+#include <string>
+#include <poll.h>
 
 class User
 {

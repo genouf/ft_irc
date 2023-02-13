@@ -2,7 +2,6 @@
 #include "User.hpp"
 #include <map>
 #include <string>
-#include <vector>
 
 class User;
 

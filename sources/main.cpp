@@ -1,5 +1,4 @@
 #include "../includes/Server.hpp"
-#include "poll.h"
 #include <csignal>
 
 bool run = true;

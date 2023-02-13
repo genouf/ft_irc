@@ -1,5 +1,5 @@
 #include "../includes/Server.hpp"
-#include "../includes/User.hpp"
+#include <sstream>
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
 Server::Server(int port, std::string password)
@@ -60,40 +60,38 @@ int Server::getSocket() const { return(this->_sockfd); }
 /*	FUNCTIONS	*/
 int	Server::run()
 {
-	while (42)
+
+	int ret = poll(this->_sockets.data(), this->_sockets.size(), -1);
+	if (ret < 0)
 	{
-		int ret = poll(this->_sockets.data(), this->_sockets.size(), -1);
-		if (ret < 0)
+		//std::perror("Error polling");
+		return (1);
+	}
+	for (int i = 0; i < (int)this->_sockets.size(); i++)
+	{
+		if (this->_sockets[i].revents == 0)
+			continue;
+		if (this->_sockets[i].revents != POLLIN)
 		{
-			//std::perror("Error polling");
+			std::perror("Error about revents");
+			this->delete_socket(this->_sockets[i]);
 			return (1);
 		}
-		for (int i = 0; i < (int)this->_sockets.size(); i++)
+		if (this->_sockets[i].fd == this->_sockfd)
 		{
-			if (this->_sockets[i].revents == 0)
-				continue ;
-			if (this->_sockets[i].revents != POLLIN)
-			{
-				std::perror("Error about revents");
-				this->delete_socket(this->_sockets[i]);
+			ret = this->new_socket();
+			if (ret == 1)
 				return (1);
-			}
-			if (this->_sockets[i].fd == this->_sockfd)
-			{
-				ret = this->new_socket();
-				if (ret == 1)
-					return (1);
-				else if (ret == 2)
-					break;
-			}
-			else
-			{
-				ret = this->new_msg(i);
-				if (ret == 1)
-					return (1);
-				else if (ret == 2)
-					continue;
-			}
+			else if (ret == 2)
+				break;
+		}
+		else
+		{
+			ret = this->new_msg(i);
+			if (ret == 1)
+				return (1);
+			else if (ret == 2)
+				continue;
 		}
 	}
 	return (0);

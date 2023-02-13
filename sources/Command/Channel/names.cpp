@@ -1,5 +1,4 @@
 #include "../../../includes/Server.hpp"
-#include <algorithm>
 
 int		Server::cmd_names(std::vector<std::string> params, User &user)
 {

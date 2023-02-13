@@ -1,4 +1,5 @@
 #include "../includes/Channel.hpp"
+#include <sstream>
 
 /*	CONSTRUCTOR AND DESTRUCTOR	*/
 Channel::Channel() { return ; }

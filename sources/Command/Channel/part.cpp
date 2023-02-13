@@ -1,5 +1,4 @@
 #include "../../../includes/Server.hpp"
-#include <algorithm>
 
 int	Server::cmd_part(std::vector<std::string> params, User &user)
 {

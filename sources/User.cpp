@@ -34,6 +34,7 @@ std::string User::getIp() const { return (this->_ip); }
 
 bool		User::getOp() const { return (this->_op); }
 
+std::string &User::get_input() { return (this->_input); }
 
 /*	SETTER	*/
 void User::setNick(std::string input) { this->_nick = input; }

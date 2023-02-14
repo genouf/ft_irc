@@ -257,7 +257,7 @@ int		Server::new_msg(int &i)
 			user.get_input().replace(pos, 2, " ");
 			pos = user.get_input().find("  ");
 		}
-		std::cout << "JE VAIS SEND : " <<  user.get_input() << std::endl;
+		std::cout << "MONITOR : " <<  user.get_input() << std::endl;
 		this->monitor_cmd(this->parsing_msg(user.get_input()), this->_sockets[i].fd);
 		user.get_input().clear();
 	}

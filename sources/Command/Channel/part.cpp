@@ -28,6 +28,8 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 			else
 				send_client("442 " + *it + " :You're not on that channel", user);
 		}
+		else
+			send_client("403 " + *it + " :No such channel", user);
 	}
 	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
 	{

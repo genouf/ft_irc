@@ -81,6 +81,9 @@ class Server
 		//Operator
 		int		cmd_kill(std::vector<std::string> params, User &user);
 
+		// Utils
+		void	pop_back_str(std::string &str);
+
 	public:
 		/*	CONSTRUCTOR / DESTRUCTOR	*/
 		Server(int port, std::string password);

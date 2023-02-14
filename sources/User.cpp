@@ -32,6 +32,7 @@ std::string User::getIp() const { return (this->_ip); }
 
 bool		User::getOp() const { return (this->_op); }
 
+std::string &User::get_input() { return (this->_input); }
 
 /*	SETTER	*/
 void User::setNick(std::string input) { this->_nick = input; }
@@ -47,4 +48,5 @@ void User::setIp(std::string input) { this->_ip = input; }
 void User::setOp(bool input) { this->_op = input; }
 
 
-bool	User::isAut() const { return (this->_status == AUTHENTIFICATED); }
+/*	GETTER IS	*/
+bool User::isAut() const { return (this->_status == AUTHENTIFICATED); }

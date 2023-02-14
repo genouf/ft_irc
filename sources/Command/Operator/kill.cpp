@@ -8,7 +8,8 @@ int		Server::cmd_kill(std::vector<std::string> params, User &user)
 		this->send_client(sret, user);
 		return (0);
 	}
-	if (params.size() < 2)
+	std::cout << params[0] << " #### " << params[1] << " #### " << std::endl;
+	if (params.size() < 2 || (params.size() > 1 && params[1].size() < 2))
 	{
 		this->send_client("461 KILL :Not enough parameters\r\n", user);
 		return (0);

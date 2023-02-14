@@ -1,6 +1,7 @@
 #include "../includes/Server.hpp"
 #include "../includes/User.hpp"
 #include <sstream>
+#include <numeric>
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
 Server::Server(int port, std::string password)
@@ -208,10 +209,18 @@ int		Server::new_socket()
 	return (0);
 }
 
+void	Server::pop_back_str(std::string &str)
+{
+	std::string::iterator it = str.begin() + str.size();
+	str.erase(it, str.end());
+	return ;
+}
+
 int		Server::new_msg(int &i)
 {
 	char	msg[1024];
 	int		ret = -1;
+	User	&user = this->_users.find(this->_sockets[i].fd)->second;
 
 	ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
 	if (ret < 0)
@@ -232,7 +241,26 @@ int		Server::new_msg(int &i)
 	msg[ret] = '\0';
 	std::cout << "[RECEIVE] From client " << this->_sockets[i].fd << " to server: " << msg << std::endl;
 	std::string msg_s(msg);
-	this->monitor_cmd(this->parsing_msg(msg_s), this->_sockets[i].fd);
+	if (msg_s.find('\n') == std::string::npos)
+		user.get_input().append(msg_s + " ");
+	else if (msg_s.find('\n') != std::string::npos && msg_s.size() == 1)
+	{
+		this->pop_back_str(user.get_input());
+		user.get_input().append("\r\n");
+	}
+	else
+		user.get_input().append(msg_s);
+	if (user.get_input().find('\n') != std::string::npos)
+	{
+		std::size_t pos = user.get_input().find("  ");
+		while (pos != std::string::npos) {
+			user.get_input().replace(pos, 2, " ");
+			pos = user.get_input().find("  ");
+		}
+		std::cout << "JE VAIS SEND : " <<  user.get_input() << std::endl;
+		this->monitor_cmd(this->parsing_msg(user.get_input()), this->_sockets[i].fd);
+		user.get_input().clear();
+	}
 	return (0);
 }
 
@@ -303,6 +331,8 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		if (tmp_it != this->_cmd_functions.end())
 		{
 			tmp_func = tmp_it->second;
+			if (user.isAut() == false && (*((*it).begin()) != "PASS" && *((*it).begin()) != "NICK" && *((*it).begin()) != "USER"))
+				return ;
 			(*it).erase((*it).begin());
 			if (!(this->*tmp_func)((*it), user))
 				return ;
@@ -313,6 +343,8 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		user.setStatus(AUTHENTIFICATED);
 		user.ping_info.token = user.getNick();
 		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
+		std::vector<std::string> params;
+		this->cmd_motd(params, user);
 		// this->send_ping(user);
 	}
 }

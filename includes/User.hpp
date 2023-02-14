@@ -5,6 +5,7 @@
 #include <string>
 #include <poll.h>
 #include <ctime>
+#include <vector>
 
 enum status {
 	UNKNOWN,
@@ -54,6 +55,8 @@ class User
 		};
 
 		/*	PRIVATE MEMBER VAR	*/
+		std::string			_input;
+		std::vector<std::string> _inputs;
 		std::string			_nick;
 		std::string			_username;
 		std::string			_realname;
@@ -77,6 +80,7 @@ class User
 		int 		getFd() const;
 		std::string	getIp() const;
 		bool		getOp() const;
+		std::string &get_input();
 
 		/*	SETTER	*/
 		void setNick(std::string input);

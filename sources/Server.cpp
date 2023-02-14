@@ -1,4 +1,5 @@
 #include "../includes/Server.hpp"
+#include "../includes/User.hpp"
 #include <sstream>
 
 /*	CONSTRUCTOR / DESTRUCTOR	*/
@@ -124,7 +125,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["NOTICE"] = &Server::cmd_notice;
 
 	//Operator
-	this->_cmd_functions["KILL"] = &Server::cmd_kill;
+	this->_cmd_functions["kill"] = &Server::cmd_kill;
 	return ;
 }
 
@@ -138,7 +139,7 @@ void	Server::send_client(std::string msg, User user)
 {
 	std::string from;
 
-	if (user.getAut() == true)
+	if (user.isAut())
 		from = ":" + user.getNick() + "!" + user.getUsername() + "@" + user.getIp();
 	else
 		from = ":localhost";
@@ -153,7 +154,7 @@ void	Server::send_client(std::string msg, User user_from, User user_to)
 {
 	std::string from;
 
-	if (user_from.getAut() == true)
+	if (user_from.isAut())
 		from = ":" + user_from.getNick() + "!" + user_from.getUsername() + "@" + user_from.getIp();
 	else
 		from = ":localhost";
@@ -307,9 +308,9 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 				return ;
 		}
 	}
-	if (user.getAut() == false && user.auth_ok.authentificated())
+	if (!user.isAut() && user.auth_ok.authentificated())
 	{
-		user.setAut(true);
+		user.setStatus(AUTHENTIFICATED);
 		user.ping_info.token = user.getNick();
 		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
 		// this->send_ping(user);

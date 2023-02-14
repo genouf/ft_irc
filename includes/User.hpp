@@ -6,6 +6,13 @@
 #include <poll.h>
 #include <ctime>
 
+enum status {
+	UNKNOWN,
+	AUTHENTIFICATED,
+	CONNECTED,
+	DISCONNECTED
+};
+
 class User
 {
 	private:
@@ -50,7 +57,7 @@ class User
 		std::string			_nick;
 		std::string			_username;
 		std::string			_realname;
-		bool				_auth;
+		enum status			_status;
 		pollfd				_fd;
 		std::string			_ip;
 		std::string			_hostname;
@@ -66,7 +73,6 @@ class User
 		std::string	getNick() const;
 		std::string getUsername() const;
 		std::string getRealname() const;
-		int 		getAut() const ;
 		pollfd		getPollFd() const;
 		int 		getFd() const;
 		std::string	getIp() const;
@@ -76,9 +82,11 @@ class User
 		void setNick(std::string input);
 		void setUsername(std::string input);
 		void setRealname(std::string input);
-		void setAut(bool input);
+		void setStatus(enum status input);
 		void setIp(std::string ip);
 		void setOp(bool input);
+
+		bool	isAut() const;
 
 		auth_ok				auth_ok;
 		pinged				ping_info;

@@ -2,7 +2,7 @@
 
 int		Server::is_auth_nick(User &user)
 {
-	if (!user.getAut())
+	if (!user.isAut())
 	{
 		this->disconnect(user);
 		return (0);

@@ -7,29 +7,32 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 		send_client("461 PART :Not enough parameters", user);
 		return (0);
 	}
-	size_t i = 0;
-	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+	std::vector<std::string> chan = this->params_channel(params[0]);
+	for (std::vector<std::string>::iterator it = chan.begin(); it != chan.end(); it++)
 	{
-		if (it->first == params[i])
+		if (this->_channels.find(*it) != this->_channels.end())
 		{
-			if (it->second.isUserInChannel(user))
+			if (this->_channels[*it].isUserInChannel(user))
 			{
-				for (std::map<int, User*>::iterator it2 = it->second.getUsers().begin(); it2 != it->second.getUsers().end(); it2++)
-					send_client("PART " + params[i], (*it2->second));
-				it->second.removeUser(user);
-				if (it->second.getUsers().size() == 0)
-					this->_channels.erase(it);
-				return (0);
+				for (std::map<int, User*>::iterator it2 = this->_channels[*it].getUsers().begin(); it2 != this->_channels[*it].getUsers().end(); it2++)
+				{
+					if (params.size() > 1)
+						send_client("PART " + *it + " " + params[1], user, (*it2->second));
+					else
+						send_client("PART " + *it, user, (*it2->second));
+				}
+				this->_channels[*it].removeUser(user);
+				if (this->_channels[*it].getUsers().size() == 0)
+					this->_channels.erase(*it);
 			}
 			else
-			{
-				send_client("442 " + params[i] + " :You're not on that channel", user);
-				return (0);
-			}
-			if (i == params.size() - 1)
-				return (0);
-			i++;
+				send_client("442 " + *it + " :You're not on that channel", user);
 		}
+	}
+	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+	{
+		if (it->second.getUsers().size() == 0)
+			this->_channels.erase(it);
 	}
 	return (0);
 }

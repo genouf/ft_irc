@@ -120,6 +120,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["TOPIC"] = &Server::cmd_topic;
 	this->_cmd_functions["NAMES"] = &Server::cmd_names;
 	this->_cmd_functions["PRIVMSG"] = &Server::cmd_privmsg;
+	this->_cmd_functions["INVITE"] = &Server::cmd_invite;
 
 	this->_cmd_functions["WHO"] = &Server::cmd_who;
 	this->_cmd_functions["motd"] = &Server::cmd_motd;
@@ -134,6 +135,16 @@ void	Server::init_cmd_functions()
 bool operator==(const pollfd &lhs, const pollfd &rhs)
 {
     return lhs.fd == rhs.fd;
+}
+
+std::map<int, User>::iterator Server::find_user_by_name(std::string name)
+{
+	for (std::map<int, User>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		if (it->second.getNick() == name)
+			return (it);
+	}
+	return (this->_users.end());
 }
 
 void	Server::send_client(std::string msg, User user)

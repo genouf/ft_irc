@@ -54,3 +54,21 @@ std::string Channel::getNbUsers_string()
 	ss << this->_users.size();
 	return (ss.str());
 }
+
+/*	INVITE	*/
+void	Channel::add_invited(std::string nick)
+{
+	this->_users_invited.insert(nick);
+	return ;
+}
+
+void	Channel::remove_invited(std::string nick)
+{
+	std::set<std::string>::iterator it_nick = this->_users_invited.find(nick);
+
+	if (it_nick != this->_users_invited.end())
+		this->_users_invited.erase(nick);
+	return ;
+}
+
+bool	Channel::is_invited(std::string nick) { return (this->_users_invited.find(nick) != this->_users_invited.end()); }

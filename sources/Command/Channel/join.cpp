@@ -4,6 +4,7 @@ void	Server::send_info_join(Channel &channel, std::string title, User &user)
 {
 	std::string AllUsers;
 
+	channel.remove_invited(user.getNick());
 	std::cout << "User added to channel " << title << std::endl;
 	channel.addUser(&user);
 	std::map<int, User*> users = channel.getUsers();

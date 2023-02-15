@@ -44,10 +44,11 @@ class Server
 		int										new_socket();
 		int										new_msg(int &i);
 		std::vector<std::vector<std::string> >	parsing_msg(std::string msg);
-		std::vector<std::string> params_channel(std::string params);
+		std::vector<std::string> 				params_channel(std::string params);
 		bool									isUser(std::string const &nick);
 		bool									isChannel(std::string channel);
 		int										get_user_fd(std::string nick);
+		std::map<int, User>::iterator 			find_user_by_name(std::string name);
 
 		/*	CMD	*/
 		bool	check_pass(std::vector<std::vector<std::string> > input);
@@ -73,6 +74,8 @@ class Server
 		int		cmd_topic(std::vector<std::string> params, User &user);
 		int		cmd_names(std::vector<std::string> params, User &user);
 		int		cmd_privmsg(std::vector<std::string> params, User &user);
+		int		cmd_invite(std::vector<std::string> params, User &user);
+
 
 		int		cmd_who(std::vector<std::string> params, User &user);
 		int		cmd_motd(std::vector<std::string> params, User &user);

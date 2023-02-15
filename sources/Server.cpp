@@ -353,13 +353,15 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 			if (!(this->*tmp_func)((*it), user))
 				return ;
 		}
+		else
+			this->send_client("421 " + user.getNick() + " " + tmp + " :Unknown command", user);
 	}
 	if (!user.isAut() && user.auth_ok.authentificated())
 	{
 		user.setStatus(AUTHENTIFICATED);
 		user.ping_info.token = user.getNick();
 		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
-		//send all User avaible on server
+		//send all User available on server
 		std::string AllUsers;
 		for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++)
 		{

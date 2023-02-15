@@ -2,11 +2,13 @@
 
 int		Server::cmd_mode(std::vector<std::string> params, User &user)
 {
-	if (params.size() < 2 || params[0].empty())
+	if (params.size() < 1 || params[0].empty())
 	{
 		this->send_client("461 MODE :Not enough parameters", user);
 		return (0);
 	}
+	if (params.size() < 2)
+		return (0);
 	if (params[1][0] == '+')
 	{
 		if (params[1][1] == 'O' || params[1][1] == 'o')

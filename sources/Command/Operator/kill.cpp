@@ -1,4 +1,5 @@
 #include "../../../includes/Server.hpp"
+#include <numeric>
 
 int		Server::cmd_kill(std::vector<std::string> params, User &user)
 {
@@ -20,13 +21,15 @@ int		Server::cmd_kill(std::vector<std::string> params, User &user)
 		return (0);
 	}
 	User kill_user = this->_users.find(this->get_user_fd(params[0]))->second;
-	this->send_client("ERROR :You have been killed, " + params[2], kill_user);
-	// Send a KILL message to the killed_user
-	this->send_client("KILL " + kill_user.getNick() + " :" + params[2], kill_user);
-	this->send_client("Closing Link: " + kill_user.getNick() + " (" + kill_user.getNick() + ")", kill_user);
-	// Kill the user with cmd_quit
+	params[1] = params[1].erase(0, 1);
+	std::string reason;
+	for (std::vector<std::string>::iterator it = params.begin() + 1; it != params.end(); it++)
+		reason += *it + " ";
+	reason = reason.erase(reason.size() - 1, 1);
+	this->send_client("KILL " + kill_user.getNick() + " :" + reason, user, kill_user);
+	this->send_client("Closing Link: " + kill_user.getNick() + "[" + kill_user.getIp() + "]" + " (Killed by " + user.getNick() + " " + reason + ")", kill_user);
 	std::vector<std::string> quit;
-	quit.append("Killed " + kill_user.getNick() + " (" + params[2] + ");
-	this->cmd_quit(params, kill_user);
+	quit.push_back(reason);
+	this->cmd_quit(quit, kill_user);
 	return(1);
 }

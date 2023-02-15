@@ -12,16 +12,25 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 
 		if (params.size() == 1)
 		{
-			for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+			std::map<std::string, Channel>::iterator it = this->_channels.find(params[0]);
+			if (it != this->_channels.end())
 			{
-				if (it->first == params[0])
+				if (it->second.getTopic().empty())
 				{
-					this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
+					this->send_client("331 " + user.getNick() + " " + params[0] + " :No topic is set", user);
+					return (0);
+				}
+				else
+				{
+					this->send_client("332 " + user.getNick() + " " + params[0] + " " + it->second.getTopic(), user);
 					return (0);
 				}
 			}
-			this->send_client("403 " + params[0] + " :No such channel", user);
-			return (0);
+			else
+			{
+				this->send_client("403 " + params[0] + " :No such channel", user);
+				return (0);
+			}
 		}
 		else
 		{

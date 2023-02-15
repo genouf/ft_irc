@@ -129,6 +129,7 @@ void	Server::init_cmd_functions()
 
 	//Operator
 	this->_cmd_functions["kill"] = &Server::cmd_kill;
+	this->_cmd_functions["MODE"] = &Server::cmd_mode;
 	return ;
 }
 

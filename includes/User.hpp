@@ -80,6 +80,7 @@ class User
 		int 		getFd() const;
 		std::string	getIp() const;
 		bool		getOp() const;
+		bool		isAut() const;
 		std::string &get_input();
 
 		/*	SETTER	*/
@@ -90,7 +91,6 @@ class User
 		void setIp(std::string ip);
 		void setOp(bool input);
 
-		bool	isAut() const;
 
 		auth_ok				auth_ok;
 		pinged				ping_info;

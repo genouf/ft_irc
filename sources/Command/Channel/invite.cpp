@@ -2,7 +2,6 @@
 
 int		Server::cmd_invite(std::vector<std::string> params, User &user)
 {
-	std::cout << "PARAMS[0] is " << params[0] << " PARAMS[1] is " << params[1] << std::endl;
 	if (params.size() == 0 || params[0].empty())
 	{
 		for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)

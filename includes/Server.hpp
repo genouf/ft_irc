@@ -75,6 +75,8 @@ class Server
 		int		cmd_names(std::vector<std::string> params, User &user);
 		int		cmd_privmsg(std::vector<std::string> params, User &user);
 		int		cmd_invite(std::vector<std::string> params, User &user);
+		int		kick_user(Channel &channel, User &user_from, User &user_to, std::vector<std::string> params);
+		int		cmd_kick(std::vector<std::string> params, User &user);
 
 
 		int		cmd_who(std::vector<std::string> params, User &user);

@@ -1,6 +1,6 @@
 FILES:=	main Server User Channel \
 			Command/Connection/pass Command/Connection/user Command/Connection/nick Command/Connection/ping Command/Connection/pong Command/Connection/quit Command/Connection/oper\
-			Command/Channel/join Command/Channel/list Command/Channel/part Command/Channel/topic Command/Channel/names Command/Channel/privmsg Command/Channel/invite\
+			Command/Channel/join Command/Channel/list Command/Channel/part Command/Channel/topic Command/Channel/names Command/Channel/privmsg Command/Channel/invite Command/Channel/kick\
 			Command/Operator/kill \
 			Command/who Command/motd Command/notice
 NAME:= ircserv

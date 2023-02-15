@@ -121,6 +121,7 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["NAMES"] = &Server::cmd_names;
 	this->_cmd_functions["PRIVMSG"] = &Server::cmd_privmsg;
 	this->_cmd_functions["INVITE"] = &Server::cmd_invite;
+	this->_cmd_functions["KICK"] = &Server::cmd_kick;
 
 	this->_cmd_functions["WHO"] = &Server::cmd_who;
 	this->_cmd_functions["motd"] = &Server::cmd_motd;

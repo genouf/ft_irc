@@ -232,6 +232,7 @@ int		Server::new_msg(int &i)
 	char	msg[1024];
 	int		ret = -1;
 	User	&user = this->_users.find(this->_sockets[i].fd)->second;
+	int		user_fd = user.getFd();	
 
 	ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
 	if (ret < 0)
@@ -270,7 +271,8 @@ int		Server::new_msg(int &i)
 		}
 		std::cout << "MONITOR : " <<  user.get_input() << std::endl;
 		this->monitor_cmd(this->parsing_msg(user.get_input()), this->_sockets[i].fd);
-		user.get_input().clear();
+		if (this->_users.find(user_fd) != this->_users.end())
+			user.get_input().clear();
 	}
 	return (0);
 }

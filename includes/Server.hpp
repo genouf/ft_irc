@@ -82,9 +82,11 @@ class Server
 		int		cmd_who(std::vector<std::string> params, User &user);
 		int		cmd_motd(std::vector<std::string> params, User &user);
 		int		cmd_notice(std::vector<std::string> params, User &user);
+		int		cmd_info(std::vector<std::string> params, User &user);
 
 		//Operator
 		int		cmd_kill(std::vector<std::string> params, User &user);
+		int		cmd_mode(std::vector<std::string> params, User &user);
 
 		// Utils
 		void	pop_back_str(std::string &str);

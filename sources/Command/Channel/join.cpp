@@ -9,7 +9,11 @@ void	Server::send_info_join(Channel &channel, std::string title, User &user)
 	channel.addUser(&user);
 	std::map<int, User*> users = channel.getUsers();
 	for (std::map<int, User*>::iterator it = users.begin(); it != users.end(); it++)
+	{
+		if (it->second->getOp())
+			AllUsers.append("@");
 		AllUsers.append(it->second->getNick() + " ");
+	}
 	if (!channel.getTopic().empty())
 	{
 		std::string msg = "332 " + user.getNick() + " " + title + " :" + channel.getTopic();

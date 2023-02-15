@@ -126,9 +126,11 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["WHO"] = &Server::cmd_who;
 	this->_cmd_functions["motd"] = &Server::cmd_motd;
 	this->_cmd_functions["NOTICE"] = &Server::cmd_notice;
+	this->_cmd_functions["info"] = &Server::cmd_info;
 
 	//Operator
 	this->_cmd_functions["kill"] = &Server::cmd_kill;
+	this->_cmd_functions["MODE"] = &Server::cmd_mode;
 	return ;
 }
 
@@ -233,7 +235,7 @@ int		Server::new_msg(int &i)
 	char	msg[1024];
 	int		ret = -1;
 	User	&user = this->_users.find(this->_sockets[i].fd)->second;
-	int		user_fd = user.getFd();	
+	int		user_fd = user.getFd();
 
 	ret = recv(this->_sockets[i].fd, &msg, sizeof(msg), 0);
 	if (ret < 0)
@@ -357,8 +359,18 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		user.setStatus(AUTHENTIFICATED);
 		user.ping_info.token = user.getNick();
 		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
+		//send all User avaible on server
+		std::string AllUsers;
+		for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++)
+		{
+			if (it->second.getOp())
+				AllUsers.append("@");
+			AllUsers.append(it->second.getNick() + " ");
+		}
+		this->send_client("001 " + user.getNick() + " :Users on the server : " + AllUsers, user);
 		std::vector<std::string> params;
 		this->cmd_motd(params, user);
+		this->cmd_info(params, user);
 		// this->send_ping(user);
 	}
 }

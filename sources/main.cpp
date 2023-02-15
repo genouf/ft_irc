@@ -10,10 +10,27 @@ void	handler(int sig)
 	return ;
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	Server sock(6667, "PASSWORD");
+	if (argc != 3)
+	{
+		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
+		return (0);
+	}
+	int port = atoi(argv[1]);
+	if (port < 0 || port > 65535)
+	{
+		std::cout << "Error: Port must be between 0 and 65535" << std::endl;
+		return (0);
+	}
+	std::string password = argv[2];
+	if (password.empty())
+	{
+		std::cout << "Error: Password can't be empty" << std::endl;
+		return (0);
+	}
 
+	Server sock(port, password);
 	std::cout << "SERVER ON" << std::endl;
 	signal(SIGINT, handler);
 	while (run)

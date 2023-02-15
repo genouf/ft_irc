@@ -20,6 +20,13 @@ int		Server::cmd_kill(std::vector<std::string> params, User &user)
 		return (0);
 	}
 	User kill_user = this->_users.find(this->get_user_fd(params[0]))->second;
-	kill_user.setStatus(DISCONNECTED);
+	this->send_client("ERROR :You have been killed, " + params[2], kill_user);
+	// Send a KILL message to the killed_user
+	this->send_client("KILL " + kill_user.getNick() + " :" + params[2], kill_user);
+	this->send_client("Closing Link: " + kill_user.getNick() + " (" + kill_user.getNick() + ")", kill_user);
+	// Kill the user with cmd_quit
+	std::vector<std::string> quit;
+	quit.append("Killed " + kill_user.getNick() + " (" + params[2] + ");
+	this->cmd_quit(params, kill_user);
 	return(1);
 }

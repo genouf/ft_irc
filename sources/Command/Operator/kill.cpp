@@ -29,7 +29,7 @@ int		Server::cmd_kill(std::vector<std::string> params, User &user)
 	this->send_client("KILL " + kill_user.getNick() + " :" + reason, user, kill_user);
 	this->send_client("Closing Link: " + kill_user.getNick() + "[" + kill_user.getIp() + "]" + " (Killed by " + user.getNick() + " " + reason + ")", kill_user);
 	std::vector<std::string> quit;
-	quit.push_back(reason);
+	quit.push_back("Kick because : " + reason);
 	this->cmd_quit(quit, kill_user);
 	return(1);
 }

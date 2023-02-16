@@ -14,7 +14,7 @@ int		Server::cmd_quit(std::vector<std::string> params, User &user)
 			{
 				if (it_user->second->getFd() != user.getFd() && user_called.find(it_user->second->getFd()) == user_called.end())
 				{
-					this->send_client("QUIT " + std::accumulate(params.begin(), params.end(), std::string("")), *(it_user->second));
+					this->send_client("QUIT " + std::accumulate(params.begin(), params.end(), std::string("")), user, *(it_user->second));
 					user_called.insert(it_user->second->getFd());
 				}
 			}

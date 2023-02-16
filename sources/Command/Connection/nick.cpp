@@ -23,7 +23,7 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 		this->disconnect(user);
 		return (0);
 	}
-	if (params.size() > 1 || params[0].find_first_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-", 0) != std::string::npos)
+	if (params.size() > 1 || params[0].find_first_not_of("0123456789QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm-_", 0) != std::string::npos)
 	{
 		std::string sret = "432 " + params[0] + " :Erroneus nickname\r\n";
 		this->send_client(sret, user);

@@ -33,14 +33,14 @@ Server::Server(int port, std::string password)
 	this->_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	if (bind(this->_sockfd, (struct sockaddr *)&this->_addr, sizeof(this->_addr)) < 0)
 	{
-		perror("Error binding socket");
+		std::perror("Error binding socket");
 		close(this->_sockfd);
 		exit(1);
 	}
 
 	if (listen(this->_sockfd, MAX_QUEUED) < 0)
 	{
-		perror("Error listening socket");
+		std::perror("Error listening socket");
 		close(this->_sockfd);
 		exit(1);
 	}
@@ -346,6 +346,8 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		cmd_f										tmp_func = 0;
 		std::map<std::string, cmd_f>::iterator  	tmp_it;
 
+		if (tmp.empty())
+			continue;
 		tmp_it = this->_cmd_functions.find(tmp);
 		if (tmp_it != this->_cmd_functions.end())
 		{

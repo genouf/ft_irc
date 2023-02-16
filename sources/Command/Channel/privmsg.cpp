@@ -34,6 +34,8 @@ int		Server::cmd_privmsg(std::vector<std::string> params, User &user)
 			if (it->second.getNick() == params[0])
 				this->send_client("PRIVMSG " + params[0] + " :" + msg, user, it->second);
 	}
+	else if (params[1].find("PING") != std::string::npos)
+		this->send_client("401 :No such nick/channel", user);
 	else
 		this->send_client("401 " + params[0] + " :No such " + params[0], user);
 	return (0);

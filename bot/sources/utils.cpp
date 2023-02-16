@@ -25,3 +25,10 @@ std::vector<std::vector<std::string> >	Bot::parsing_msg(std::string msg)
 	}
 	return (big_v);
 }
+
+void	Bot::pop_back_str(std::string &str)
+{
+	std::string::iterator it = str.begin() + str.size();
+	str.erase(it, str.end());
+	return ;
+}

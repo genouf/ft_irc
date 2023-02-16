@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <poll.h>
+#include <numeric>
 
 Bot::Bot(std::string serv_pass) : _nick("cgg_bot")
 {
@@ -123,6 +124,22 @@ void	Bot::monitor_cmd(std::vector<std::string> arg)
 	if (cmd == ":!ping")
 	{
 		std::string sret = "PRIVMSG " + user + " :pong\r\n";
+		send(this->_sockfd, sret.c_str(), sret.length(), 0);
+	}
+	else if (cmd.find(":!weather") != std::string::npos)
+	{
+		// Coupe la chaine de caractère à partir de la position 11 et stock la dans city
+		std::string city;
+		for (std::vector<std::string>::iterator it = arg.begin() + 4; it != arg.end(); it++)
+			city += *it + " ";
+		pop_back_str(city);
+		std::map<std::string, std::string> weather = this->weather(city);
+		std::string sret = "PRIVMSG " + user + " :Weather in " + weather["city"] + " : " + weather["temp"] + "°C, " + " feels like: " + weather["feelslike"] + ", " + weather["condition"] + ", wind speed: " + weather["wind"] + ", humidity: " + weather["humidity"] + ", it's " + weather["is_day"] + "\r\n";
+		send(this->_sockfd, sret.c_str(), sret.length(), 0);
+	}
+	else if (cmd.find(":!help") != std::string::npos)
+	{
+		std::string sret = "PRIVMSG " + user + " :!ping, !weather <city>, !help\r\n";
 		send(this->_sockfd, sret.c_str(), sret.length(), 0);
 	}
 	return ;

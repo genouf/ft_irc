@@ -1,6 +1,6 @@
-FILES:=	main Bot utils
+FILES:=	main Bot utils weather
 
-NAME:= bot_irc
+NAME:= cgg_bot
 
 # ------------------
 CC:=c++
@@ -30,7 +30,7 @@ all: ${NAME}
 
 ${NAME}: ${OBJ}
 	@echo ${CYAN} " - Compiling $@" $(RED)
-	@${CC} ${CFLAGS} ${SRC} -o ${NAME}
+	@${CC} ${CFLAGS} ${SRC} -o ${NAME} -lcurl
 	@echo $(GREEN) " - OK" $(EOC)
 
 ${CCHPATH}%.o: ${SRCPATH}%.cpp

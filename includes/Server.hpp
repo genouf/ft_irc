@@ -78,11 +78,12 @@ class Server
 		int		kick_user(Channel &channel, User &user_from, User &user_to, std::vector<std::string> params);
 		int		cmd_kick(std::vector<std::string> params, User &user);
 
-
+		// Other
 		int		cmd_who(std::vector<std::string> params, User &user);
 		int		cmd_motd(std::vector<std::string> params, User &user);
 		int		cmd_notice(std::vector<std::string> params, User &user);
 		int		cmd_info(std::vector<std::string> params, User &user);
+		int		cmd_cap(std::vector<std::string> params, User &user);
 
 		//Operator
 		int		cmd_kill(std::vector<std::string> params, User &user);

@@ -17,7 +17,7 @@ void	Server::send_info_join(Channel &channel, std::string title, User &user)
 	params.push_back(title);
 	this->cmd_names(params, user);
 	for (std::map<int, User*>::iterator it = old_users.begin(); it != old_users.end(); it++)
-		this->send_client("JOIN " + title, (*it->second));
+		this->send_client("JOIN " + title, user, (*it->second));
 }
 
 int		Server::cmd_join(std::vector<std::string> params, User &user)

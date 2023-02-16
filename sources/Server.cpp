@@ -349,7 +349,7 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		if (tmp_it != this->_cmd_functions.end())
 		{
 			tmp_func = tmp_it->second;
-			if (user.isAut() == false && (*((*it).begin()) != "PASS" && *((*it).begin()) != "NICK" && *((*it).begin()) != "USER"))
+			if (user.isAut() == false && (*((*it).begin()) != "PASS" && *((*it).begin()) != "NICK" && *((*it).begin()) != "USER") && *((*it).begin()) != "CAP")
 				return ;
 			(*it).erase((*it).begin());
 			if (!(this->*tmp_func)((*it), user))

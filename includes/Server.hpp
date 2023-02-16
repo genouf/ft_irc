@@ -17,6 +17,7 @@
 #include "User.hpp"
 
 #define MAX_QUEUED 1000
+#define ADMIN_PASS "42admin"
 
 class User;
 class Channel;
@@ -29,6 +30,7 @@ class Server
 		int								_sockfd;
 		struct sockaddr_in				_addr;
 		std::string						_password;
+		std::string						_oper_password;
 		std::vector<pollfd>				_sockets;
 		std::map<int, User>				_users;
 		std::vector<std::string>		_nicks;

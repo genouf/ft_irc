@@ -10,7 +10,7 @@ int		Server::cmd_user(std::vector<std::string> params, User &user)
 	}
 	if (user.isAut())
 	{
-		this->send_client("462 :8You may not reregister", user);
+		this->send_client("462 :You may not reregister", user);
 		return (0);
 	}
 	std::string name;

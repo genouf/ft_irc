@@ -9,6 +9,7 @@ Server::Server(int port, std::string password)
 	int on = 1;
 
 	this->_password = password;
+	this->_oper_password = ADMIN_PASS;
 	this->_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_sockfd < 0)
 	{

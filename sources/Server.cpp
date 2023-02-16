@@ -9,6 +9,7 @@ Server::Server(int port, std::string password)
 	int on = 1;
 
 	this->_password = password;
+	this->_oper_password = ADMIN_PASS;
 	this->_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (this->_sockfd < 0)
 	{
@@ -123,10 +124,12 @@ void	Server::init_cmd_functions()
 	this->_cmd_functions["INVITE"] = &Server::cmd_invite;
 	this->_cmd_functions["KICK"] = &Server::cmd_kick;
 
+	//Other
 	this->_cmd_functions["WHO"] = &Server::cmd_who;
 	this->_cmd_functions["motd"] = &Server::cmd_motd;
 	this->_cmd_functions["NOTICE"] = &Server::cmd_notice;
 	this->_cmd_functions["info"] = &Server::cmd_info;
+	this->_cmd_functions["CAP"] = &Server::cmd_cap;
 
 	//Operator
 	this->_cmd_functions["kill"] = &Server::cmd_kill;
@@ -347,7 +350,7 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 		if (tmp_it != this->_cmd_functions.end())
 		{
 			tmp_func = tmp_it->second;
-			if (user.isAut() == false && (*((*it).begin()) != "PASS" && *((*it).begin()) != "NICK" && *((*it).begin()) != "USER"))
+			if (user.isAut() == false && (*((*it).begin()) != "PASS" && *((*it).begin()) != "NICK" && *((*it).begin()) != "USER") && *((*it).begin()) != "CAP")
 				return ;
 			(*it).erase((*it).begin());
 			if (!(this->*tmp_func)((*it), user))
@@ -409,4 +412,11 @@ int	Server::get_user_fd(std::string nick)
 			return (it->first);
 	}
 	return (-1);
+}
+
+int		Server::cmd_cap(std::vector<std::string> params, User &user)
+{
+	(void)params;
+	(void)user;
+	return (1);
 }

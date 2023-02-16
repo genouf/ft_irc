@@ -5,18 +5,18 @@ int		Server::cmd_kill(std::vector<std::string> params, User &user)
 {
 	if (!user.getOp())
 	{
-		std::string sret = "481 " + user.getNick() + " :Permission Denied- You're not an IRC operator\r\n";
+		std::string sret = "481 " + user.getNick() + " :Permission Denied- You're not an IRC operator";
 		this->send_client(sret, user);
 		return (0);
 	}
 	if (params.size() < 2 || (params.size() > 1 && params[1].size() < 2))
 	{
-		this->send_client("461 KILL :Not enough parameters\r\n", user);
+		this->send_client("461 KILL :Not enough parameters", user);
 		return (0);
 	}
 	if (find(this->_nicks.begin(), this->_nicks.end(), params[0]) == this->_nicks.end())
 	{
-		std::string sret = "401 " + params[0] + " :No such nick\r\n";
+		std::string sret = "401 " + params[0] + " :No such nick";
 		this->send_client(sret, user);
 		return (0);
 	}

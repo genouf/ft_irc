@@ -36,10 +36,13 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 		this->send_client(sret, user);
 		return (this->is_auth_nick(user));
 	}
+	if (user.isAut() == true)
+	{
+		this->send_client("NICK " + params[0], user);
+		this->_nicks.erase(find(this->_nicks.begin(), this->_nicks.end(), user.getNick()));
+	}
 	user.auth_ok.nick = true;
 	user.setNick(params[0]);
-	if (nick_found != this->_nicks.end())
-		this->_nicks.erase(nick_found);
 	this->_nicks.push_back(params[0]);
 	return (1);
 }

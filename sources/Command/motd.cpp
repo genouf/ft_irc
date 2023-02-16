@@ -3,8 +3,8 @@
 int	Server::cmd_motd(std::vector<std::string> params, User &user)
 {
 	(void)params;
-	this->send_client("375 " + user.getNick() + " :- " + "ft_irc Message of the day - ", user);
-	this->send_client("372 " + user.getNick() + " :- " + "Welcome to the ft_irc server", user);
+	this->send_client("375 " + user.getNick() + " :- " + "CGG Message of the day - ", user);
+	this->send_client("372 " + user.getNick() + " :- " + "Welcome to the CGG server", user);
 	this->send_client("372 " + user.getNick() + "                     ,ood8888booo,", user);
 	this->send_client("372 " + user.getNick() + "                  ,od8           8bo,", user);
 	this->send_client("372 " + user.getNick() + "               ,od                   bo,", user);

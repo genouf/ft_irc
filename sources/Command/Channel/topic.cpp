@@ -32,7 +32,7 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 				return (0);
 			}
 		}
-		else
+		else if (user.getOp() == true)
 		{
 			if (params[1] == "::")
 			{
@@ -68,6 +68,11 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 				this->send_client("403 " + params[0] + " :No such channel", user);
 				return (0);
 			}
+		}
+		else
+		{
+			this->send_client("482 " + user.getNick() + params[0] + " :You're not channel operator", user);
+			return (0);
 		}
 	}
 	return (0);

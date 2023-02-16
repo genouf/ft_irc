@@ -19,11 +19,9 @@ int	Server::cmd_part(std::vector<std::string> params, User &user)
 					if (params.size() > 1)
 						send_client("PART " + *it + " " + params[1], user, (*it2->second));
 					else
-						send_client("PART " + *it, user, (*it2->second));
+						send_client("PART " + *it + " " + ":Leaving", user, (*it2->second));
 				}
 				this->_channels[*it].removeUser(user);
-				if (this->_channels[*it].getUsers().size() == 0)
-					this->_channels.erase(*it);
 			}
 			else
 				send_client("442 " + *it + " :You're not on that channel", user);

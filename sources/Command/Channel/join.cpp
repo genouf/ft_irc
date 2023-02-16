@@ -2,8 +2,6 @@
 
 void	Server::send_info_join(Channel &channel, std::string title, User &user)
 {
-	//std::string AllUsers;
-	std::map<int, User*> old_users = channel.getUsers();
 	channel.remove_invited(user.getNick());
 	std::cout << "User added to channel " << title << std::endl;
 	channel.addUser(&user);
@@ -16,7 +14,7 @@ void	Server::send_info_join(Channel &channel, std::string title, User &user)
 	std::vector<std::string> params;
 	params.push_back(title);
 	this->cmd_names(params, user);
-	for (std::map<int, User*>::iterator it = old_users.begin(); it != old_users.end(); it++)
+	for (std::map<int, User*>::iterator it = users.begin(); it != users.end(); it++)
 		this->send_client("JOIN " + title, user, (*it->second));
 }
 

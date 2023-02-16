@@ -2,29 +2,21 @@
 
 void	Server::send_info_join(Channel &channel, std::string title, User &user)
 {
-	std::string AllUsers;
-
+	//std::string AllUsers;
+	std::map<int, User*> old_users = channel.getUsers();
 	channel.remove_invited(user.getNick());
 	std::cout << "User added to channel " << title << std::endl;
 	channel.addUser(&user);
 	std::map<int, User*> users = channel.getUsers();
-	for (std::map<int, User*>::iterator it = users.begin(); it != users.end(); it++)
-	{
-		if (it->second->getOp())
-			AllUsers.append("@");
-		AllUsers.append(it->second->getNick() + " ");
-	}
 	if (!channel.getTopic().empty())
 	{
 		std::string msg = "332 " + user.getNick() + " " + title + " :" + channel.getTopic();
 		this->send_client(msg, user);
 	}
-	std::string msg = "353 " + user.getNick() + " = " + title + " :";
-	msg.append(AllUsers);
-	this->send_client(msg, user);
-	msg = "366 " + user.getNick() + " " + title + " :End of NAMES list";
-	this->send_client(msg, user);
-	for (std::map<int, User*>::iterator it = users.begin(); it != users.end(); it++)
+	std::vector<std::string> params;
+	params.push_back(title);
+	this->cmd_names(params, user);
+	for (std::map<int, User*>::iterator it = old_users.begin(); it != old_users.end(); it++)
 		this->send_client("JOIN " + title, (*it->second));
 }
 

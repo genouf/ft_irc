@@ -3,9 +3,14 @@
 int		Server::cmd_password(std::vector<std::string> params, User &user)
 {
 	std::string pass;
+	if (user.isAut() == true)
+	{
+		this->send_client("462 PASS :You may not reregister", user);
+		return (1);
+	}
 	if (params.size() == 0 || params[0].empty())
 	{
-		this->send_client("461 PASS : Not enough parameters", user);
+		this->send_client("461 PASS :Not enough parameters", user);
 		this->disconnect(user);
 		return (0);
 	}
@@ -13,11 +18,11 @@ int		Server::cmd_password(std::vector<std::string> params, User &user)
 		pass = pass + *it;
 	if (this->_password != pass)
 	{
-		this->send_client("464 : Password incorrect", user);
+		this->send_client("464 :Password incorrect", user);
 		this->disconnect(user);
 		return (0);
 	}
 	else
 		user.auth_ok.pass = true;
-	return (1);//question pour le code ERR_ALREADYREGISTERED (462)
+	return (1);
 }

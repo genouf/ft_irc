@@ -3,7 +3,6 @@
 void	Server::send_info_join(Channel &channel, std::string title, User &user)
 {
 	channel.remove_invited(user.getNick());
-	std::cout << "User added to channel " << title << std::endl;
 	channel.addUser(&user);
 	std::map<int, User*> users = channel.getUsers();
 	if (!channel.getTopic().empty())
@@ -36,7 +35,6 @@ int		Server::cmd_join(std::vector<std::string> params, User &user)
 	}
 	for (std::vector<std::string>::iterator it = params.begin(); it != params.end(); it++)
 	{
-		std::cout << "Channel " << *it << std::endl;
 		this->send_info_join(this->_channels.find(*it)->second, *it, user);
 	}
 	return (0);

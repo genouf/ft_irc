@@ -74,7 +74,7 @@ void 	Bot::auth()
 
 void 	Bot::run()
 {
-	
+
 	this->rcv_msg();
 	return ;
 }
@@ -105,7 +105,6 @@ void 	Bot::rcv_msg()
 		exit(1);
 	}
 	buffer[bytes_read] = '\0';
-	std::cout << "bytes_read: " << bytes_read << std::endl;
 	std::cout << buffer << std::endl;
 
 	if (bytes_read < 100)

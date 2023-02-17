@@ -2,7 +2,6 @@
 
 int	Server::cmd_notice(std::vector<std::string> params, User &user)
 {
-	std::cout << "NOTICE" << std::endl;
 	if (params.size() == 0 || params[0].empty())
 	{
 		this->send_client("461 NOTICE :Not enough parameters", user);
@@ -18,7 +17,6 @@ int	Server::cmd_notice(std::vector<std::string> params, User &user)
 	msg.erase(0, 1);
 	if (this->isChannel(params[0]) == true)
 	{
-		std::cout << "Channel" << std::endl;
 		for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); it++)
 			if (it->first == params[0])
 				for (std::map<int, User*>::iterator it2 = it->second.getUsers().begin(); it2 != it->second.getUsers().end(); it2++)

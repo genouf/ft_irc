@@ -2,6 +2,7 @@
 #include <string>
 #include <curl/curl.h>
 #include <map>
+#include <cstdlib>
 #include "../includes/Bot.hpp"
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
@@ -51,7 +52,9 @@ std::map<std::string, std::string> Bot::weather(std::string city)
 	curl_easy_setopt(hnd, CURLOPT_URL, q.c_str());
 
 	struct curl_slist *headers = NULL;
-	headers = curl_slist_append(headers, "X-RapidAPI-Key: a6134e6dfbmshf64b68dfc421e8ep14d0efjsn18507129a896");
+	std::string api_key = "X-RapidAPI-Key: ";
+	api_key += std::getenv("RAPIDAPI_KEY");
+	headers = curl_slist_append(headers, api_key.c_str());
 	headers = curl_slist_append(headers, "X-RapidAPI-Host: weatherapi-com.p.rapidapi.com");
 	curl_easy_setopt(hnd, CURLOPT_HTTPHEADER, headers);
 	curl_easy_setopt(hnd, CURLOPT_WRITEFUNCTION, WriteCallback);
@@ -64,7 +67,6 @@ std::map<std::string, std::string> Bot::weather(std::string city)
 	}
 	else
 	{
-		//std::cout << readBuffer << std::endl;
 		temp = parse_int(readBuffer, "temp_c");
 		city = parse_string(readBuffer, "name");
 		is_day = parse_string(readBuffer, "is_day");

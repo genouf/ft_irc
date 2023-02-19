@@ -17,8 +17,9 @@ int main(int argc, char **argv)
 		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
 		return (1);
 	}
+	std::string sport(argv[1]);
 	int port = atoi(argv[1]);
-	if (port < 0 || port > 65535)
+	if (port < 0 || port > 65535 || sport.find_first_not_of("1234567890") != std::string::npos)
 	{
 		std::cout << "Error: Port must be between 0 and 65535" << std::endl;
 		return (1);

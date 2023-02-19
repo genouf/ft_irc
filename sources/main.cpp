@@ -10,32 +10,49 @@ void	handler(int sig)
 	return ;
 }
 
-int main(int argc, char **argv)
+int	parsing(int argc, char **argv, int const &port, std::string const &password)
 {
+	std::string sport(argv[1]);
+
 	if (argc != 3)
 	{
 		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
 		return (1);
 	}
-	std::string sport(argv[1]);
-	int port = atoi(argv[1]);
-	if (port < 0 || port > 65535 || sport.find_first_not_of("1234567890") != std::string::npos)
+	if (sport.empty())
+	{
+		std::cout << "Error: Port can't be empty" << std::endl;
+		return (1);
+	}
+	if (sport.find_first_not_of("1234567890") != std::string::npos)
+	{
+		std::cout << "Error: Port must be a number" << std::endl;
+		return (1);
+	}
+	if (port < 0 || port > 65535)
 	{
 		std::cout << "Error: Port must be between 0 and 65535" << std::endl;
 		return (1);
 	}
-	std::string password = argv[2];
 	if (password.empty())
 	{
 		std::cout << "Error: Password can't be empty" << std::endl;
 		return (1);
 	}
+	return (0);
+}
 
+int main(int argc, char **argv)
+{
+	int port = atoi(argv[1]);
+	std::string password = argv[2];
+
+	if (parsing(argc, argv, port, password) == 1)
+		return (1);
 	Server sock(port, password);
 	std::cout << "SERVER ON" << std::endl;
 	signal(SIGINT, handler);
 	while (run)
 		sock.run();
-
 	return (0);
 }

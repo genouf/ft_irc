@@ -34,6 +34,8 @@ int		Server::cmd_invite(std::vector<std::string> params, User &user)
 		this->send_client(sret, user);
 		return (0);
 	}
+	this->send_client("341 " + user.getNick() + " " + params[1] + " " + params[0], user);
+	this->send_client("INVITE " + params[0] + " " + params[1], user, this->find_user_by_name(params[0])->second);
 	chan->second.add_invited(params[0]);
 	return (1);
 }

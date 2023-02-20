@@ -9,7 +9,7 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 	}
 	else
 	{
-
+		std::cout << "TOPIC" << std::endl;
 		if (params.size() == 1)
 		{
 			std::map<std::string, Channel>::iterator it = this->_channels.find(params[0]);
@@ -34,6 +34,7 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 		}
 		else if (user.getOp() == true)
 		{
+			std::cout << "Topic is " << params[1] << std::endl;
 			if (params[1] == "::")
 			{
 				for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
@@ -41,7 +42,7 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 					if (it->first == params[0])
 					{
 						it->second.setTopic("");
-						this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
+						this->send_client("332 " + user.getNick() + " " + it->first + " :" + "Topic Cleared", user);
 						return (0);
 					}
 				}
@@ -60,6 +61,9 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 							if (it2 != params.begin())
 								newTopic += *it2 + " ";
 						}
+						std::cout << "New topic is " << newTopic << std::endl;
+						newTopic.erase(0, 1);
+						newTopic.erase(newTopic.size() - 1, 1);
 						it->second.setTopic(newTopic);
 						this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
 						return (0);

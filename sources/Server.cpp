@@ -431,8 +431,6 @@ bool	Server::isUser(std::string const &nick)
 
 bool	Server::isChannel(std::string channel)
 {
-	if (channel[0] != '#')
-		channel.insert(0, "#");
 	if (this->_channels.find(channel) != this->_channels.end())
 		return (true);
 	return (false);

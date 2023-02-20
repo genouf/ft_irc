@@ -10,15 +10,10 @@ void	handler(int sig)
 	return ;
 }
 
-int	parsing(int argc, char **argv, int const &port, std::string const &password)
+int	parsing(char **argv, int const &port, std::string const &password)
 {
 	std::string sport(argv[1]);
 
-	if (argc != 3)
-	{
-		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
-		return (1);
-	}
 	if (sport.empty())
 	{
 		std::cout << "Error: Port can't be empty" << std::endl;
@@ -44,10 +39,15 @@ int	parsing(int argc, char **argv, int const &port, std::string const &password)
 
 int main(int argc, char **argv)
 {
+	if (argc != 3)
+	{
+		std::cout << "Usage: ./ircserv <port> <password>" << std::endl;
+		return (1);
+	}
 	int port = atoi(argv[1]);
 	std::string password = argv[2];
 
-	if (parsing(argc, argv, port, password) == 1)
+	if (parsing(argv, port, password) == 1)
 		return (1);
 	Server sock(port, password);
 	std::cout << "SERVER ON" << std::endl;

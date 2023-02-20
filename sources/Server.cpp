@@ -183,6 +183,24 @@ void	Server::send_client(std::string msg, User user_from, User user_to)
 	return ;
 }
 
+void	Server::send_clients(std::string msg, User user_from)
+{
+	std::string from;
+
+	if (user_from.isAut())
+		from = ":" + user_from.getNick() + "!" + user_from.getUsername() + "@" + user_from.getIp();
+	else
+		from = ":localhost";
+	from += " " + msg;
+	for (std::map<int, User>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
+		std::cout << "[SEND] From server to " << it->second.getFd() << ": " << std::endl << from << std::endl;
+		from.append("\r\n");
+		send(it->second.getFd(), from.c_str(), from.size(), 0);
+	}
+	return ;
+}
+
 void	Server::delete_socket(pollfd pfd)
 {
 	std::vector<pollfd>::iterator	tmp;

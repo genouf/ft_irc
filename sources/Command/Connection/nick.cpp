@@ -38,7 +38,8 @@ int		Server::cmd_nick(std::vector<std::string> params, User &user)
 	}
 	if (user.isAut() == true)
 	{
-		this->send_client("NICK " + params[0], user);
+		// this->send_client("NICK " + params[0], user);
+		this->send_clients("NICK " + params[0], user);
 		this->_nicks.erase(find(this->_nicks.begin(), this->_nicks.end(), user.getNick()));
 	}
 	user.auth_ok.nick = true;

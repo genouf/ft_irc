@@ -247,6 +247,11 @@ void	Server::delete_socket(pollfd pfd)
 
 void	Server::disconnect(User user)
 {
+	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
+	{
+		if (it->second.isUserInChannel(user))
+			it->second.removeUser(user);
+	}
 	this->send_client("ERROR : You have been disconnected.", user);
 	this->delete_socket(user.getPollFd());
 	if (user.auth_ok.nick == true)

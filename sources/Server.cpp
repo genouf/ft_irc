@@ -311,6 +311,12 @@ int		Server::new_msg(int &i)
 	msg[ret] = '\0';
 	std::cout << "[RECEIVE] From client " << this->_sockets[i].fd << " to server: " << msg << std::endl;
 	std::string msg_s(msg);
+	if (msg_s.size() > 513)
+	{
+		this->send_client("ERROR : Message too long", user);
+		this->disconnect(user);
+		return (0);
+	}
 	if (msg_s.find('\n') != std::string::npos && msg_s.size() == 1)
 	{
 		this->pop_back_str(user.get_input());
@@ -325,7 +331,6 @@ int		Server::new_msg(int &i)
 			user.get_input().replace(pos, 2, " ");
 			pos = user.get_input().find("  ");
 		}
-		std::cout << "MONITOR : " <<  user.get_input() << std::endl;
 		this->monitor_cmd(this->parsing_msg(user.get_input()), this->_sockets[i].fd);
 		if (this->_users.find(user_fd) != this->_users.end())
 			user.get_input().clear();

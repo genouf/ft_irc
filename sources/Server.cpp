@@ -67,7 +67,7 @@ int	Server::run()
 	// this->monitor_ping();
 	if (ret < 0)
 	{
-		//std::perror("Error polling");
+		std::perror("Error polling");
 		return (1);
 	}
 	for (int i = 0; i < (int)this->_sockets.size(); i++)

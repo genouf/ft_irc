@@ -19,6 +19,11 @@ int	parsing(char **argv, int const &port, std::string const &password)
 		std::cout << "Error: Port can't be empty" << std::endl;
 		return (1);
 	}
+	if (password.empty())
+	{
+		std::cout << "Error: Password can't be empty" << std::endl;
+		return (1);
+	}
 	if (sport.find_first_not_of("1234567890") != std::string::npos)
 	{
 		std::cout << "Error: Port must be a number" << std::endl;
@@ -27,11 +32,6 @@ int	parsing(char **argv, int const &port, std::string const &password)
 	if (port < 0 || port > 65535)
 	{
 		std::cout << "Error: Port must be between 0 and 65535" << std::endl;
-		return (1);
-	}
-	if (password.empty())
-	{
-		std::cout << "Error: Password can't be empty" << std::endl;
 		return (1);
 	}
 	return (0);

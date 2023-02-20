@@ -4,13 +4,13 @@ int		Server::cmd_user(std::vector<std::string> params, User &user)
 {
 	if (params.size() < 4)
 	{
-		this->send_client("461 USER :Not enough parameters", user);
+		this->add_client("461 USER :Not enough parameters", user);
 		this->disconnect(user);
 		return (0);
 	}
 	if (user.isAut())
 	{
-		this->send_client("462 :You may not reregister", user);
+		this->add_client("462 :You may not reregister", user);
 		return (0);
 	}
 	std::string name;
@@ -26,7 +26,7 @@ int		Server::cmd_user(std::vector<std::string> params, User &user)
 	params.pop_back();
 	if (name.size() < 1 || params.back().size() < 1)
 	{
-		this->send_client("461 USER :Not enough parameters", user);
+		this->add_client("461 USER :Not enough parameters", user);
 		this->disconnect(user);
 		return (0);
 	}

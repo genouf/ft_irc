@@ -15,8 +15,8 @@ int		Server::cmd_names(std::vector<std::string> params, User &user)
 						names += "@";
 					names += it2->second->getNick() + " ";
 				}
-				this->send_client("353 " + user.getNick() + " = " + it->first + " :" + names, user);
-				this->send_client("366 " + user.getNick() + " " + it->first + " :End of NAMES list.", user);
+				this->add_client("353 " + user.getNick() + " = " + it->first + " :" + names, user);
+				this->add_client("366 " + user.getNick() + " " + it->first + " :End of NAMES list.", user);
 			}
 		}
 	}
@@ -35,8 +35,8 @@ int		Server::cmd_names(std::vector<std::string> params, User &user)
 						names += "@";
 					names += it2->second->getNick() + " ";
 				}
-				this->send_client("353 " + user.getNick() + " = " + chan->first + " :" + names, user);
-				this->send_client("366 " + user.getNick() + " " + chan->first + " :End of NAMES list.", user);
+				this->add_client("353 " + user.getNick() + " = " + chan->first + " :" + names, user);
+				this->add_client("366 " + user.getNick() + " " + chan->first + " :End of NAMES list.", user);
 			}
 		}
 	}

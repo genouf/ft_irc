@@ -76,8 +76,8 @@ int	Server::run()
 			continue;
 		if (this->_sockets[i].revents != POLLIN)
 		{
-			// std::perror("Error about revents");
-			// this->delete_socket(this->_sockets[i]);
+			std::perror("Error about revents");
+			this->disconnect(this->_users[this->_sockets[i].fd]);
 			return (1);
 		}
 		if (this->_sockets[i].fd == this->_sockfd)
@@ -96,6 +96,7 @@ int	Server::run()
 			else if (ret == 2)
 				continue;
 		}
+		this->manage_send();
 	}
 	return (0);
 }
@@ -153,6 +154,38 @@ std::map<int, User>::iterator Server::find_user_by_name(std::string name)
 	return (this->_users.end());
 }
 
+
+void	Server::add_client(std::string msg, User user)
+{
+	send_struct tmp(false, msg, user);
+	this->_send_queue.push_back(tmp);
+	return ;
+}
+
+void	Server::add_client(std::string msg, User user_from, User user_to)
+{
+	send_struct tmp(true, msg, user_from, user_to);
+	this->_send_queue.push_back(tmp);
+	return ;
+}
+
+void	Server::manage_send()
+{
+	for (std::vector<send_struct>::iterator it = this->_send_queue.begin(); it != this->_send_queue.end(); it++)
+	{
+		if (this->_users.find(it->user_to.getFd()) == this->_users.end())
+			continue;
+		if (it->mode == true && this->_users.find(it->user_from.getFd()) == this->_users.end())
+			continue;
+		if (it->mode == false)
+			this->send_client(it->msg, it->user_to);
+		else
+			this->send_client(it->msg, it->user_from, it->user_to);
+	}
+	this->_send_queue.clear();
+}
+
+
 void	Server::send_client(std::string msg, User user)
 {
 	std::string from;
@@ -187,7 +220,8 @@ void	Server::delete_socket(pollfd pfd)
 {
 	std::vector<pollfd>::iterator	tmp;
 
-	close(pfd.fd);
+	if (pfd.fd != -1)
+		close(pfd.fd);
 	tmp = std::find(this->_sockets.begin(), this->_sockets.end(), pfd);
 	this->_sockets.erase(tmp);
 	this->_users.erase(pfd.fd);
@@ -357,13 +391,13 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 				return ;
 		}
 		else
-			this->send_client("421 " + user.getNick() + " " + tmp + " :Unknown command", user);
+			this->add_client("421 " + user.getNick() + " " + tmp + " :Unknown command", user);
 	}
 	if (!user.isAut() && user.auth_ok.authentificated())
 	{
 		user.setStatus(AUTHENTIFICATED);
 		user.ping_info.token = user.getNick();
-		this->send_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
+		this->add_client("001 " + user.getNick() + " :Welcome to the CGG Network, " + user.getNick() + "[" + user.getUsername() + "@" + "127.0.0.1]", user);
 		//send all User available on server
 		std::string AllUsers;
 		for (std::map<int, User>::iterator it = _users.begin(); it != _users.end(); it++)
@@ -372,7 +406,7 @@ void	Server::monitor_cmd(std::vector<std::vector<std::string> > input, int user_
 				AllUsers.append("@");
 			AllUsers.append(it->second.getNick() + " ");
 		}
-		this->send_client("001 " + user.getNick() + " :Users on the server : " + AllUsers, user);
+		this->add_client("001 " + user.getNick() + " :Users on the server : " + AllUsers, user);
 		std::vector<std::string> params;
 		this->cmd_motd(params, user);
 		this->cmd_info(params, user);

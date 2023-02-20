@@ -21,6 +21,13 @@ int		Server::cmd_quit(std::vector<std::string> params, User &user)
 			it->second.getUsers().erase(user.getFd());
 		}
 	}
+	for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); )
+	{
+		if (it->second.getUsers().size() == 0)
+			this->_channels.erase(it++);
+		else
+			++it;
+	}
 	this->disconnect(user);
 	return (0);
 }

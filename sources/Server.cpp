@@ -259,9 +259,7 @@ int		Server::new_msg(int &i)
 	msg[ret] = '\0';
 	std::cout << "[RECEIVE] From client " << this->_sockets[i].fd << " to server: " << msg << std::endl;
 	std::string msg_s(msg);
-	if (msg_s.find('\n') == std::string::npos)
-		user.get_input().append(msg_s + " ");
-	else if (msg_s.find('\n') != std::string::npos && msg_s.size() == 1)
+	if (msg_s.find('\n') != std::string::npos && msg_s.size() == 1)
 	{
 		this->pop_back_str(user.get_input());
 		user.get_input().append("\r\n");

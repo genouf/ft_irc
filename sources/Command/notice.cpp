@@ -4,7 +4,7 @@ int	Server::cmd_notice(std::vector<std::string> params, User &user)
 {
 	if (params.size() == 0 || params[0].empty())
 	{
-		this->send_client("461 NOTICE :Not enough parameters", user);
+		this->add_client("461 NOTICE :Not enough parameters", user);
 		return (0);
 	}
 	std::string msg;
@@ -21,11 +21,11 @@ int	Server::cmd_notice(std::vector<std::string> params, User &user)
 			if (it->first == params[0])
 				for (std::map<int, User*>::iterator it2 = it->second.getUsers().begin(); it2 != it->second.getUsers().end(); it2++)
 					if (it2->second->getFd() != user.getFd())
-						this->send_client(" NOTICE " + params[0] + " :" + msg, user, (*it2->second));
+						this->add_client(" NOTICE " + params[0] + " :" + msg, user, (*it2->second));
 	}
 	else if (this->isUser(params[0]) == true)
 		for (std::map<int, User>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
 			if (it->second.getNick() == params[0])
-				this->send_client(" NOTICE " + params[0] + " :" + msg, user, it->second);
+				this->add_client(" NOTICE " + params[0] + " :" + msg, user, it->second);
 	return (0);
 }

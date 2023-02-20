@@ -26,7 +26,7 @@ class User
 				this->nick = false;
 				this->user = false;
 			}
-			virtual ~auth_ok() {}
+			virtual ~auth_ok() { return ; }
 
 			bool	authentificated()
 			{

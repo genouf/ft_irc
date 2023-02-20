@@ -25,8 +25,23 @@ class Channel;
 class Server
 {
 	typedef int(Server::*cmd_f)(std::vector<std::string>, User &);
-	/*	MEMBER VAR	*/
+
 	private:
+
+		/*	PRIVATE STRUCT	*/
+		struct send_struct
+		{
+			send_struct(bool mode, std::string msg, User user) : mode(mode), msg(msg), user_to(user){ return ; }
+			send_struct(bool mode, std::string msg, User user_from, User user_to) : mode(mode), msg(msg), user_from(user_from), user_to(user_to) { return ; }
+			virtual ~send_struct() { return ; }
+
+			bool			mode;
+			std::string		msg;
+			User			user_from;
+			User			user_to;
+		};
+
+		/*	PRIVATE MEMBER VAR	*/
 		int								_sockfd;
 		struct sockaddr_in				_addr;
 		std::string						_password;
@@ -36,9 +51,13 @@ class Server
 		std::vector<std::string>		_nicks;
 		std::map<std::string, cmd_f>	_cmd_functions;
 		std::map<std::string, Channel>	_channels;
+		std::vector<send_struct>		_send_queue;
 
 		void									init_cmd_functions();
 		/*	UTILS	*/
+		void									add_client(std::string msg, User user);
+		void									add_client(std::string msg, User user_from, User user_to);
+		void									manage_send();
 		void									send_client(std::string msg, User user);
 		void									send_client(std::string msg, User user_from, User user_to);
 		void									send_clients(std::string msg, User user_from);

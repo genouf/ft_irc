@@ -5,7 +5,7 @@ int		Server::cmd_list(std::vector<std::string> params, User &user)
 	if (params.size() == 0 || params[0].empty())
 	{
 		for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
-			this->send_client("322 " + user.getNick() + " " + it->first + " " + it->second.getNbUsers_string() + " :" + it->second.getTopic(), user);
+			this->add_client("322 " + user.getNick() + " " + it->first + " " + it->second.getNbUsers_string() + " :" + it->second.getTopic(), user);
 	}
 	else
 	{
@@ -13,9 +13,9 @@ int		Server::cmd_list(std::vector<std::string> params, User &user)
 		for (std::vector<std::string>::iterator it = tmp.begin(); it != tmp.end(); it++)
 		{
 			if (this->_channels.find(*it) != this->_channels.end())
-				this->send_client("322 " + user.getNick() + " " + *it + " " + this->_channels[*it].getNbUsers_string() + " :" + this->_channels[*it].getTopic(), user);
+				this->add_client("322 " + user.getNick() + " " + *it + " " + this->_channels[*it].getNbUsers_string() + " :" + this->_channels[*it].getTopic(), user);
 		}
 	}
-	this->send_client("323 " + user.getNick() + " :End of channel list", user);
+	this->add_client("323 " + user.getNick() + " :End of channel list", user);
 	return (0);
 }

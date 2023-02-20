@@ -25,7 +25,7 @@ void	Server::send_ping(User &user)
 	}
 	user.ping_info.last_ping = clock();
 	user.ping_info.responded = false;
-	this->send_client("PING " + user.ping_info.token, user);
+	this->add_client("PING " + user.ping_info.token, user);
 	return ;
 }
 

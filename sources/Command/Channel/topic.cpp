@@ -4,12 +4,12 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 {
 	if (params.size() == 0 || params[0].empty())
 	{
-		this->send_client("461 " + user.getNick() + " TOPIC :Not enough parameters\r\n", user);
+		this->add_client("461 " + user.getNick() + " TOPIC :Not enough parameters\r\n", user);
 		return (0);
 	}
 	else
 	{
-
+		std::cout << "TOPIC" << std::endl;
 		if (params.size() == 1)
 		{
 			std::map<std::string, Channel>::iterator it = this->_channels.find(params[0]);
@@ -17,23 +17,24 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 			{
 				if (it->second.getTopic().empty())
 				{
-					this->send_client("331 " + user.getNick() + " " + params[0] + " :No topic is set", user);
+					this->add_client("331 " + user.getNick() + " " + params[0] + " :No topic is set", user);
 					return (0);
 				}
 				else
 				{
-					this->send_client("332 " + user.getNick() + " " + params[0] + " " + it->second.getTopic(), user);
+					this->add_client("332 " + user.getNick() + " " + params[0] + " " + it->second.getTopic(), user);
 					return (0);
 				}
 			}
 			else
 			{
-				this->send_client("403 " + params[0] + " :No such channel", user);
+				this->add_client("403 " + params[0] + " :No such channel", user);
 				return (0);
 			}
 		}
 		else if (user.getOp() == true)
 		{
+			std::cout << "Topic is " << params[1] << std::endl;
 			if (params[1] == "::")
 			{
 				for (std::map<std::string, Channel>::iterator it = this->_channels.begin(); it != this->_channels.end(); it++)
@@ -41,11 +42,11 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 					if (it->first == params[0])
 					{
 						it->second.setTopic("");
-						this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
+						this->add_client("332 " + user.getNick() + " " + it->first + " :" + "Topic Cleared", user);
 						return (0);
 					}
 				}
-				this->send_client("403 " + params[0] + " :No such channel", user);
+				this->add_client("403 " + params[0] + " :No such channel", user);
 				return (0);
 			}
 			else
@@ -60,18 +61,21 @@ int Server::cmd_topic(std::vector<std::string> params, User &user)
 							if (it2 != params.begin())
 								newTopic += *it2 + " ";
 						}
+						std::cout << "New topic is " << newTopic << std::endl;
+						newTopic.erase(0, 1);
+						newTopic.erase(newTopic.size() - 1, 1);
 						it->second.setTopic(newTopic);
-						this->send_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
+						this->add_client("332 " + user.getNick() + " " + it->first + " :" + it->second.getTopic(), user);
 						return (0);
 					}
 				}
-				this->send_client("403 " + params[0] + " :No such channel", user);
+				this->add_client("403 " + params[0] + " :No such channel", user);
 				return (0);
 			}
 		}
 		else
 		{
-			this->send_client("482 " + user.getNick() + params[0] + " :You're not channel operator", user);
+			this->add_client("482 " + user.getNick() + params[0] + " :You're not channel operator", user);
 			return (0);
 		}
 	}
